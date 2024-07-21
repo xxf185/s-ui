@@ -12,7 +12,7 @@ jobs:
     - name: Get latest release
       id: get_release
       run: |
-        latest_release=$(curl -Ls "https://api.github.com/repos/sagernet/sing-box/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
+        latest_release=$(curl -Ls "https://api.github.com/repos/xxf185/sing-box/releases/latest" | grep '"tag_name":' | sed -E 's/.*"([^"]+)".*/\1/')
         echo "latest_release: $latest_release"
         echo "latest_release=$latest_release" >> $GITHUB_OUTPUT
    
