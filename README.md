@@ -14,12 +14,6 @@
 bash <(curl -Ls https://raw.githubusercontent.com/xxf185/s-ui/master/install.sh)
 ```
 
-## 安装自定义版本
 
-安装自定义版本.请将版本添加到安装命令的末尾.例如，版本“0.0.1”：
-
-```sh
-bash <(curl -Ls https://raw.githubusercontent.com/xxf185/s-ui/master/install.sh) 0.0.1
-```
 
 
