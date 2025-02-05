@@ -212,7 +212,8 @@ install_s-ui() {
 
     wget --no-check-certificate -O /usr/bin/s-ui https://raw.githubusercontent.com/xxf185/s-ui/master/s-ui.sh
 
-    chmod +x s-ui/sui s-ui/bin/sing-box s-ui/bin/runSingbox.sh /usr/bin/s-ui
+    chmod +x s-ui/sui s-ui/s-ui.sh
+    cp s-ui/s-ui.sh /usr/bin/s-ui
     cp -rf s-ui /usr/local/
     cp -f s-ui/*.service /etc/systemd/system/
     rm -rf s-ui
