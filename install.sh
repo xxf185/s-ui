@@ -224,6 +224,8 @@ install_s-ui() {
 
     tar zxvf s-ui-linux-$(arch).tar.gz
     rm s-ui-linux-$(arch).tar.gz -f
+    
+    wget --no-check-certificate -O /usr/bin/s-ui https://raw.githubusercontent.com/xxf185/s-ui/master/s-ui.sh
 
     chmod +x s-ui/sui s-ui/s-ui.sh
     cp s-ui/s-ui.sh /usr/bin/s-ui
