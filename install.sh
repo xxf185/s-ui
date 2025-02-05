@@ -176,21 +176,6 @@ config_after_install() {
     fi
 }
 
-prepare_services() {
-    if [[ -f "/etc/systemd/system/sing-box.service" ]]; then
-        echo -e "${yellow}停止sing-box服务... ${plain}"
-        systemctl stop sing-box
-        rm -f /usr/local/s-ui/bin/sing-box /usr/local/s-ui/bin/runSingbox.sh /usr/local/s-ui/bin/signal
-    fi
-    if [[ -e "/usr/local/s-ui/bin" ]]; then
-        echo -e "###############################################################"
-        echo -e "${green}/usr/local/s-ui/bin${red} 目录还存在!"
-        echo -e "请检查内容并在迁移后手动删除 ${plain}"
-        echo -e "###############################################################"
-    fi
-    systemctl daemon-reload
-}
-
 install_s-ui() {
     cd /tmp/
 
@@ -219,24 +204,24 @@ install_s-ui() {
 
     if [[ -e /usr/local/s-ui/ ]]; then
         systemctl stop s-ui
-    
+        systemctl stop sing-box
     fi
 
     tar zxvf s-ui-linux-$(arch).tar.gz
     rm s-ui-linux-$(arch).tar.gz -f
-    
+
     wget --no-check-certificate -O /usr/bin/s-ui https://raw.githubusercontent.com/xxf185/s-ui/master/s-ui.sh
 
-    chmod +x s-ui/sui s-ui/s-ui.sh
-    cp s-ui/s-ui.sh /usr/bin/s-ui
+    chmod +x s-ui/sui s-ui/bin/sing-box s-ui/bin/runSingbox.sh /usr/bin/s-ui
     cp -rf s-ui /usr/local/
     cp -f s-ui/*.service /etc/systemd/system/
     rm -rf s-ui
 
     config_after_install
-    prepare_services
 
-    systemctl enable s-ui --now
+    systemctl daemon-reload
+    systemctl enable s-ui  --now
+    systemctl enable sing-box --now
 
     echo -e "${green}s-ui v${last_version}${plain} 安装完成"
     echo -e ""
