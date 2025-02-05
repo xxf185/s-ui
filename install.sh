@@ -178,14 +178,14 @@ config_after_install() {
 
 prepare_services() {
     if [[ -f "/etc/systemd/system/sing-box.service" ]]; then
-        echo -e "${yellow}Stopping sing-box service... ${plain}"
+        echo -e "${yellow}停止sing-box服务... ${plain}"
         systemctl stop sing-box
         rm -f /usr/local/s-ui/bin/sing-box /usr/local/s-ui/bin/runSingbox.sh /usr/local/s-ui/bin/signal
     fi
     if [[ -e "/usr/local/s-ui/bin" ]]; then
         echo -e "###############################################################"
-        echo -e "${green}/usr/local/s-ui/bin${red} directory exists yet!"
-        echo -e "Please check the content and delete it manually after migration ${plain}"
+        echo -e "${green}/usr/local/s-ui/bin${red} 目录还存在!"
+        echo -e "请检查内容并在迁移后手动删除 ${plain}"
         echo -e "###############################################################"
     fi
     systemctl daemon-reload
