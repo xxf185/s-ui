@@ -57,7 +57,7 @@ elif [[ "${release}" == "centos" ]]; then
     fi
 elif [[ "${release}" == "ubuntu" ]]; then
     if [[ ${os_version} -lt 18 ]]; then
-        echo -e "${red} Please use Ubuntu 20 or higher version!${plain}\n" && exit 1
+        echo -e "${red} Please use Ubuntu 18 or higher version!${plain}\n" && exit 1
     fi
 elif [[ "${release}" == "fedora" ]]; then
     if [[ ${os_version} -lt 36 ]]; then
@@ -65,7 +65,7 @@ elif [[ "${release}" == "fedora" ]]; then
     fi
 elif [[ "${release}" == "debian" ]]; then
     if [[ ${os_version} -lt 9 ]]; then
-        echo -e "${red} Please use Debian 11 or higher ${plain}\n" && exit 1
+        echo -e "${red} Please use Debian 9 or higher ${plain}\n" && exit 1
     fi
 elif [[ "${release}" == "almalinux" ]]; then
     if [[ ${os_version} -lt 9 ]]; then
