@@ -82,8 +82,8 @@ elif [[ "${release}" == "oracle" ]]; then
 else
     echo -e "${red}Your operating system is not supported by this script.${plain}\n"
     echo "Please ensure you are using one of the following supported operating systems:"
-    echo "- Ubuntu 20.04+"
-    echo "- Debian 11+"
+    echo "- Ubuntu 18.04+"
+    echo "- Debian 9+"
     echo "- CentOS 8+"
     echo "- Fedora 36+"
     echo "- Arch Linux"
