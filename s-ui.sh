@@ -1,4 +1,4 @@
-#!/bin/bash
+##!/bin/bash
 
 red='\033[0;31m'
 green='\033[0;32m'
@@ -264,9 +264,9 @@ status() {
 enable() {
     systemctl enable $1
     if [[ $? == 0 ]]; then
-        LOGI "Set ${1} 开机自启成功"
+        LOGI "设置 ${1} 开机自启成功"
     else
-        LOGE "设置失败 ${1} 自动启动"
+        LOGE "设置 ${1} 开机自启失败"
     fi
 
     if [[ $# == 1 ]]; then
