@@ -794,12 +794,12 @@ show_menu() {
   echo -e "
   ${green}S-UI Admin Management Script ${plain}
 ————————————————————————————————
-  ${green}0.${plain} Exit
+  ${green}0.${plain} 退出
 ————————————————————————————————
-  ${green}1.${plain} Install
-  ${green}2.${plain} Update
-  ${green}3.${plain} Custom Version
-  ${green}4.${plain} Uninstall
+  ${green}1.${plain} 安装
+  ${green}2.${plain} 更新
+  ${green}3.${plain} 指定版本
+  ${green}4.${plain} 卸载
 ————————————————————————————————
   ${green}5.${plain} Reset admin credentials to default
   ${green}6.${plain} Set admin credentials
