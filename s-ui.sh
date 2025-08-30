@@ -82,7 +82,7 @@ update() {
         fi
         return 0
     fi
-    bash <(curl -Ls https://raw.githubusercontent.com/xxf185/s-ui/master/install.sh)
+    bash <(curl -Ls https://raw.githubusercontent.com/alireza0/s-ui/main/install.sh)
     if [[ $? == 0 ]]; then
         LOGI "Update is complete, Panel has automatically restarted "
         exit 0
@@ -98,7 +98,7 @@ custom_version() {
     exit 1
     fi
 
-    download_link="https://raw.githubusercontent.com/xxf185/s-ui/master/install.sh"
+    download_link="https://raw.githubusercontent.com/alireza0/s-ui/master/install.sh"
 
     install_command="bash <(curl -Ls $download_link) $panel_version"
 
@@ -295,7 +295,7 @@ show_log() {
 }
 
 update_shell() {
-    wget -O /usr/bin/s-ui -N --no-check-certificate https://github.com/xxf185/s-ui/raw/master/s-ui.sh
+    wget -O /usr/bin/s-ui -N --no-check-certificate https://github.com/alireza0/s-ui/raw/main/s-ui.sh
     if [[ $? != 0 ]]; then
         echo ""
         LOGE "Failed to download script, Please check whether the machine can connect Github"
@@ -772,21 +772,21 @@ generate_self_signed_cert() {
 }
 
 show_usage() {
-    echo -e "s-ui 管理脚本使用方法"
+    echo -e "S-UI Control Menu Usage"
     echo -e "------------------------------------------"
     echo -e "SUBCOMMANDS:" 
-    echo -e "s-ui              - 显示管理菜单 (功能更多)"
-    echo -e "s-ui start        - 启动 s-ui 面板"
-    echo -e "s-ui stop         - 停止 s-ui 面板"
-    echo -e "s-ui restart      - 重启 s-ui 面板"
-    echo -e "s-ui status       - 查看 s-ui 状态"
-    echo -e "s-ui enable       - 设置 s-ui 开机自启"
-    echo -e "s-ui disable      - 取消 s-ui 开机自启"
-    echo -e "s-ui log          - 查看 s-ui 日志"
-    echo -e "s-ui update       - 更新 s-ui 面板"
-    echo -e "s-ui install      - 安装 s-ui 面板"
-    echo -e "s-ui uninstall    - 卸载 s-ui 面板"
-    echo -e "s-ui help         - 控制菜单使用"
+    echo -e "s-ui              - Admin Management Script"
+    echo -e "s-ui start        - Start s-ui"
+    echo -e "s-ui stop         - Stop s-ui"
+    echo -e "s-ui restart      - Restart s-ui"
+    echo -e "s-ui status       - Current Status of s-ui"
+    echo -e "s-ui enable       - Enable Autostart on OS Startup"
+    echo -e "s-ui disable      - Disable Autostart on OS Startup"
+    echo -e "s-ui log          - Check s-ui Logs"
+    echo -e "s-ui update       - Update"
+    echo -e "s-ui install      - Install"
+    echo -e "s-ui uninstall    - Uninstall"
+    echo -e "s-ui help         - Control Menu Usage"
     echo -e "------------------------------------------"
 }
 
@@ -794,36 +794,36 @@ show_menu() {
   echo -e "
   ${green}S-UI Admin Management Script ${plain}
 ————————————————————————————————
-  ${green}0.${plain} 退出
+  ${green}0.${plain} Exit
 ————————————————————————————————
-  ${green}1.${plain} 安装
-  ${green}2.${plain} 更新
-  ${green}3.${plain} 指定版本
-  ${green}4.${plain} 卸载
+  ${green}1.${plain} Install
+  ${green}2.${plain} Update
+  ${green}3.${plain} Custom Version
+  ${green}4.${plain} Uninstall
 ————————————————————————————————
-  ${green}5.${plain} 将用户名密码重置为默认值
-  ${green}6.${plain} 设置用户名密码
-  ${green}7.${plain} 查看用户名密码
+  ${green}5.${plain} Reset admin credentials to default
+  ${green}6.${plain} Set admin credentials
+  ${green}7.${plain} View admin credentials
 ————————————————————————————————
-  ${green}8.${plain} 重置面板设置
-  ${green}9.${plain} 设置面板
-  ${green}10.${plain} 查看面板设置
+  ${green}8.${plain} Reset Panel Settings
+  ${green}9.${plain} Set Panel settings
+  ${green}10.${plain} View Panel Settings
 ————————————————————————————————
-  ${green}11.${plain} S-UI 启动
-  ${green}12.${plain} S-UI 停止
-  ${green}13.${plain} S-UI 重启
-  ${green}14.${plain} S-UI 状态
-  ${green}15.${plain} S-UI 日志
-  ${green}16.${plain} S-UI 设置开机自启
-  ${green}17.${plain} S-UI 取消开机自启
+  ${green}11.${plain} S-UI Start
+  ${green}12.${plain} S-UI Stop
+  ${green}13.${plain} S-UI Restart
+  ${green}14.${plain} S-UI Check State
+  ${green}15.${plain} S-UI Check Logs
+  ${green}16.${plain} S-UI Enable Autostart
+  ${green}17.${plain} S-UI Disable Autostart
 ————————————————————————————————
-  ${green}18.${plain} 启用&禁用BBR
-  ${green}19.${plain} SSL 证书管理
-  ${green}20.${plain} Cloudflare SSL 证书
+  ${green}18.${plain} Enable or Disable BBR
+  ${green}19.${plain} SSL Certificate Management
+  ${green}20.${plain} Cloudflare SSL Certificate
 ————————————————————————————————
  "
     show_status s-ui
-    echo && read -p "请选择 [0-20]: " num
+    echo && read -p "Please enter your selection [0-20]: " num
 
     case "${num}" in
     0)
@@ -890,7 +890,7 @@ show_menu() {
         ssl_cert_issue_CF
         ;;
     *)
-        LOGE "请选择 [0-20]"
+        LOGE "Please enter the correct number [0-20]"
         ;;
     esac
 }
