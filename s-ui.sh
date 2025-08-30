@@ -277,7 +277,7 @@ enable() {
 disable() {
     systemctl disable $1
     if [[ $? == 0 ]]; then
-        LOGI "自启 ${1} 已成功取消"
+        LOGI "开机自启 ${1} 已成功取消"
     else
         LOGE "取消失败 ${1} 开机自启"
     fi
@@ -298,11 +298,11 @@ update_shell() {
     wget -O /usr/bin/s-ui -N --no-check-certificate https://github.com/xxf185/s-ui/raw/master/s-ui.sh
     if [[ $? != 0 ]]; then
         echo ""
-        LOGE "Failed to download script, Please check whether the machine can connect Github"
+        LOGE "下载脚本失败，请检查机器是否可以连接Github"
         before_show_menu
     else
         chmod +x /usr/bin/s-ui
-        LOGI "Upgrade script succeeded, Please rerun the script" && exit 0
+        LOGI "升级脚本成功，请重新运行脚本" && exit 0
     fi
 }
 
@@ -331,7 +331,7 @@ check_uninstall() {
     check_status s-ui
     if [[ $? != 2 ]]; then
         echo ""
-        LOGE "Panel is already installed, Please do not reinstall"
+        LOGE "面板已安装"
         if [[ $# == 0 ]]; then
             before_show_menu
         fi
@@ -345,7 +345,7 @@ check_install() {
     check_status s-ui
     if [[ $? == 2 ]]; then
         echo ""
-        LOGE "Please install the panel first"
+        LOGE "请先安装面板"
         if [[ $# == 0 ]]; then
             before_show_menu
         fi
@@ -359,15 +359,15 @@ show_status() {
     check_status $1
     case $? in
     0)
-        echo -e "${1} state: ${green}Running${plain}"
+        echo -e "${1} 状态: ${green}运行${plain}"
         show_enable_status $1
         ;;
     1)
-        echo -e "${1} state: ${yellow}Not Running${plain}"
+        echo -e "${1} 状态: ${yellow}未运行${plain}"
         show_enable_status $1
         ;;
     2)
-        echo -e "${1} state: ${red}Not Installed${plain}"
+        echo -e "${1} 状态: ${red}未安装${plain}"
         ;;
     esac
 }
@@ -375,9 +375,9 @@ show_status() {
 show_enable_status() {
     check_enabled $1
     if [[ $? == 0 ]]; then
-        echo -e "Start ${1} automatically: ${green}Yes${plain}"
+        echo -e "开机自启 ${1} : ${green}Yes${plain}"
     else
-        echo -e "Start ${1} automatically: ${red}No${plain}"
+        echo -e "开机自启 ${1} : ${red}No${plain}"
     fi
 }
 
@@ -393,17 +393,17 @@ check_s-ui_status() {
 show_s-ui_status() {
     check_s-ui_status
     if [[ $? == 0 ]]; then
-        echo -e "s-ui state: ${green}Running${plain}"
+        echo -e "s-ui 状态: ${green}运行${plain}"
     else
-        echo -e "s-ui state: ${red}Not Running${plain}"
+        echo -e "s-ui 状态: ${red}未运行${plain}"
     fi
 }
 
 bbr_menu() {
-    echo -e "${green}\t1.${plain} Enable BBR"
-    echo -e "${green}\t2.${plain} Disable BBR"
-    echo -e "${green}\t0.${plain} Back to Main Menu"
-    read -p "Choose an option: " choice
+    echo -e "${green}\t1.${plain} 启用 BBR"
+    echo -e "${green}\t2.${plain} 禁用 BBR"
+    echo -e "${green}\t0.${plain} 返回主菜单"
+    read -p "请选择: " choice
     case "$choice" in
     0)
         show_menu
@@ -414,28 +414,28 @@ bbr_menu() {
     2)
         disable_bbr
         ;;
-    *) echo "Invalid choice" ;;
+    *) echo "选择错误" ;;
     esac
 }
 
 disable_bbr() {
     if ! grep -q "net.core.default_qdisc=fq" /etc/sysctl.conf || ! grep -q "net.ipv4.tcp_congestion_control=bbr" /etc/sysctl.conf; then
-        echo -e "${yellow}BBR is not currently enabled.${plain}"
+        echo -e "${yellow}BBR 当前未启用.${plain}"
         exit 0
     fi
     sed -i 's/net.core.default_qdisc=fq/net.core.default_qdisc=pfifo_fast/' /etc/sysctl.conf
     sed -i 's/net.ipv4.tcp_congestion_control=bbr/net.ipv4.tcp_congestion_control=cubic/' /etc/sysctl.conf
     sysctl -p
     if [[ $(sysctl net.ipv4.tcp_congestion_control | awk '{print $3}') == "cubic" ]]; then
-        echo -e "${green}BBR has been replaced with CUBIC successfully.${plain}"
+        echo -e "${green}BBR已成功替换为CUBIC.${plain}"
     else
-        echo -e "${red}Failed to replace BBR with CUBIC. Please check your system configuration.${plain}"
+        echo -e "${red}无法用 CUBIC 替换 BBR。请检查您的系统配置.${plain}"
     fi
 }
 
 enable_bbr() {
     if grep -q "net.core.default_qdisc=fq" /etc/sysctl.conf && grep -q "net.ipv4.tcp_congestion_control=bbr" /etc/sysctl.conf; then
-        echo -e "${green}BBR is already enabled!${plain}"
+        echo -e "${green}BBR已启用!${plain}"
         exit 0
     fi
     case "${release}" in
@@ -452,7 +452,7 @@ enable_bbr() {
         pacman -Sy --noconfirm ca-certificates
         ;;
     *)
-        echo -e "${red}Unsupported operating system. Please check the script and install the necessary packages manually.${plain}\n"
+        echo -e "${red}不支持的操作系统.${plain}\n"
         exit 1
         ;;
     esac
@@ -460,47 +460,47 @@ enable_bbr() {
     echo "net.ipv4.tcp_congestion_control=bbr" | tee -a /etc/sysctl.conf
     sysctl -p
     if [[ $(sysctl net.ipv4.tcp_congestion_control | awk '{print $3}') == "bbr" ]]; then
-        echo -e "${green}BBR has been enabled successfully.${plain}"
+        echo -e "${green}BBR已成功启用.${plain}"
     else
-        echo -e "${red}Failed to enable BBR. Please check your system configuration.${plain}"
+        echo -e "${red}无法启用 BBR。请检查您的系统配置.${plain}"
     fi
 }
 
 install_acme() {
     cd ~
-    LOGI "install acme..."
+    LOGI "安装 acme..."
     curl https://get.acme.sh | sh
     if [ $? -ne 0 ]; then
-        LOGE "install acme failed"
+        LOGE "安装 acme 失败"
         return 1
     else
-        LOGI "install acme succeed"
+        LOGI "安装 acme 成功"
     fi
     return 0
 }
 
 ssl_cert_issue_main() {
-    echo -e "${green}\t1.${plain} Get SSL"
-    echo -e "${green}\t2.${plain} Revoke"
-    echo -e "${green}\t3.${plain} Force Renew"
-    echo -e "${green}\t4.${plain} Self-signed Certificate"
-    read -p "Choose an option: " choice
+    echo -e "${green}\t1.${plain} 获取证书"
+    echo -e "${green}\t2.${plain} 撤销证书"
+    echo -e "${green}\t3.${plain} 更新证书"
+    echo -e "${green}\t4.${plain} 自签名证书"
+    read -p "请选择: " choice
     case "$choice" in
         1) ssl_cert_issue ;;
         2) 
             local domain=""
-            read -p "Please enter your domain name to revoke the certificate: " domain
+            read -p "请输入您的域名: " domain
             ~/.acme.sh/acme.sh --revoke -d ${domain}
-            LOGI "Certificate revoked"
+            LOGI "证书已撤销"
             ;;
         3)
             local domain=""
-            read -p "Please enter your domain name to forcefully renew an SSL certificate: " domain
+            read -p "请输入您的域名: " domain
             ~/.acme.sh/acme.sh --renew -d ${domain} --force ;;
         4)
             generate_self_signed_cert
             ;;
-        *) echo "Invalid choice" ;;
+        *) echo "选择错误" ;;
     esac
 }
 
@@ -509,7 +509,7 @@ ssl_cert_issue() {
         echo "acme.sh could not be found. we will install it"
         install_acme
         if [ $? -ne 0 ]; then
-            LOGE "install acme failed, please check logs"
+            LOGE "安装 acme 失败"
             exit 1
         fi
     fi
@@ -527,29 +527,29 @@ ssl_cert_issue() {
         pacman -Sy --noconfirm socat
         ;;
     *)
-        echo -e "${red}Unsupported operating system. Please check the script and install the necessary packages manually.${plain}\n"
+        echo -e "${red}不支持的操作系统.${plain}\n"
         exit 1
         ;;
     esac
     if [ $? -ne 0 ]; then
-        LOGE "install socat failed, please check logs"
+        LOGE "安装socat失败"
         exit 1
     else
-        LOGI "install socat succeed..."
+        LOGI "安装socat成功..."
     fi
 
     local domain=""
-    read -p "Please enter your domain name:" domain
-    LOGD "your domain is:${domain},check it..."
+    read -p "请输入您的域名:" domain
+    LOGD "您的域名是:${domain},check it..."
     local currentCert=$(~/.acme.sh/acme.sh --list | tail -1 | awk '{print $1}')
 
     if [ ${currentCert} == ${domain} ]; then
         local certInfo=$(~/.acme.sh/acme.sh --list)
-        LOGE "system already has certs here,can not issue again,current certs details:"
+        LOGE "系统此处已有证书，当前证书详情:"
         LOGI "$certInfo"
         exit 1
     else
-        LOGI "your domain is ready for issuing cert now..."
+        LOGI "您的域名现在可以颁发证书了..."
     fi
 
     certPath="/root/cert/${domain}"
