@@ -569,7 +569,7 @@ ssl_cert_issue() {
     ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
     ~/.acme.sh/acme.sh --issue -d ${domain} --standalone --httpport ${WebPort}
     if [ $? -ne 0 ]; then
-        LOGE "issue certs failed,please check logs"
+        LOGE "颁发证书失败"
         rm -rf ~/.acme.sh/${domain}
         exit 1
     else
