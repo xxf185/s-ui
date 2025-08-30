@@ -561,11 +561,11 @@ ssl_cert_issue() {
     fi
 
     local WebPort=80
-    read -p "please choose which port do you use,default will be 80 port:" WebPort
+    read -p "请输入端口，默认80端口:" WebPort
     if [[ ${WebPort} -gt 65535 || ${WebPort} -lt 1 ]]; then
-        LOGE "your input ${WebPort} is invalid,will use default port"
+        LOGE “您输入 ${WebPort} 无效，将使用默认端口"
     fi
-    LOGI "will use port:${WebPort} to issue certs,please make sure this port is open..."
+    LOGI "将使用:${WebPort} 颁发证书,请确认此端口开放..."
     ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
     ~/.acme.sh/acme.sh --issue -d ${domain} --standalone --httpport ${WebPort}
     if [ $? -ne 0 ]; then
