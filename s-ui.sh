@@ -506,7 +506,7 @@ ssl_cert_issue_main() {
 
 ssl_cert_issue() {
     if ! command -v ~/.acme.sh/acme.sh &>/dev/null; then
-        echo "acme.sh could not be found. we will install it"
+        echo "acme.sh 安装中"
         install_acme
         if [ $? -ne 0 ]; then
             LOGE "安装 acme 失败"
