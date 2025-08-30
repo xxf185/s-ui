@@ -21,7 +21,7 @@ else
     echo "系统OS检查失败，请联系作者!!" >&2
     exit 1
 fi
-echo "The OS release is: $release"
+echo "系统: $release"
 
 arch() {
     case "$(uname -m)" in
