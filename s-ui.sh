@@ -794,36 +794,36 @@ show_menu() {
   echo -e "
   ${green}S-UI Admin Management Script ${plain}
 ————————————————————————————————
-  ${green}0.${plain} Exit
+  ${green}0.${plain} 退出
 ————————————————————————————————
-  ${green}1.${plain} Install
-  ${green}2.${plain} Update
-  ${green}3.${plain} Custom Version
-  ${green}4.${plain} Uninstall
+  ${green}1.${plain} 安装
+  ${green}2.${plain} 更新
+  ${green}3.${plain} 指定版本
+  ${green}4.${plain} 卸载
 ————————————————————————————————
-  ${green}5.${plain} Reset admin credentials to default
-  ${green}6.${plain} Set admin credentials
-  ${green}7.${plain} View admin credentials
+  ${green}5.${plain} 将用户名密码重置为默认值
+  ${green}6.${plain} 设置用户名密码
+  ${green}7.${plain} 查看用户名密码
 ————————————————————————————————
-  ${green}8.${plain} Reset Panel Settings
-  ${green}9.${plain} Set Panel settings
-  ${green}10.${plain} View Panel Settings
+  ${green}8.${plain} 重置面板设置
+  ${green}9.${plain} 设置面板
+  ${green}10.${plain} 查看面板设置
 ————————————————————————————————
-  ${green}11.${plain} S-UI Start
-  ${green}12.${plain} S-UI Stop
-  ${green}13.${plain} S-UI Restart
-  ${green}14.${plain} S-UI Check State
-  ${green}15.${plain} S-UI Check Logs
-  ${green}16.${plain} S-UI Enable Autostart
-  ${green}17.${plain} S-UI Disable Autostart
+  ${green}11.${plain} S-UI 启动
+  ${green}12.${plain} S-UI 停止
+  ${green}13.${plain} S-UI 重启
+  ${green}14.${plain} S-UI 状态
+  ${green}15.${plain} S-UI 日志
+  ${green}16.${plain} S-UI 设置开机自启
+  ${green}17.${plain} S-UI 取消开机自启
 ————————————————————————————————
-  ${green}18.${plain} Enable or Disable BBR
-  ${green}19.${plain} SSL Certificate Management
-  ${green}20.${plain} Cloudflare SSL Certificate
+  ${green}18.${plain} 启用&禁用BBR
+  ${green}19.${plain} SSL 证书管理
+  ${green}20.${plain} Cloudflare SSL 证书
 ————————————————————————————————
  "
     show_status s-ui
-    echo && read -p "Please enter your selection [0-20]: " num
+    echo && read -p "请选择 [0-20]: " num
 
     case "${num}" in
     0)
@@ -890,7 +890,7 @@ show_menu() {
         ssl_cert_issue_CF
         ;;
     *)
-        LOGE "Please enter the correct number [0-20]"
+        LOGE "请选择 [0-20]"
         ;;
     esac
 }
