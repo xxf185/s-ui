@@ -17,7 +17,7 @@ function LOGI() {
     echo -e "${green}[INF] $* ${plain}"
 }
 
-[[ $EUID -ne 0 ]] && LOGE "ERROR: You must be root to run this script! \n" && exit 1
+[[ $EUID -ne 0 ]] && LOGE "错误:必须以root用户运行此脚本! \n" && exit 1
 
 if [[ -f /etc/os-release ]]; then
     source /etc/os-release
@@ -26,11 +26,11 @@ elif [[ -f /usr/lib/os-release ]]; then
     source /usr/lib/os-release
     release=$ID
 else
-    echo "Failed to check the system OS, please contact the author!" >&2
+    echo "检查系统版本失败，请联系脚本作者!" >&2
     exit 1
 fi
 
-echo "The OS release is: $release"
+echo "系统: $release"
 
 confirm() {
     if [[ $# > 1 ]]; then
@@ -49,7 +49,7 @@ confirm() {
 }
 
 confirm_restart() {
-    confirm "Restart the ${1} service" "y"
+    confirm "重新启动 ${1} 服务" "y"
     if [[ $? == 0 ]]; then
         restart
     else
@@ -58,7 +58,7 @@ confirm_restart() {
 }
 
 before_show_menu() {
-    echo && echo -n -e "${yellow}Press enter to return to the main menu: ${plain}" && read temp
+    echo && echo -n -e "${yellow}按 Enter 键返回主菜单: ${plain}" && read temp
     show_menu
 }
 
@@ -74,9 +74,9 @@ install() {
 }
 
 update() {
-    confirm "This function will forcefully reinstall the latest version, and the data will not be lost. Do you want to continue?" "n"
+    confirm "此功能将强制重新安装最新版本，数据不会丢失。是否继续?" "n"
     if [[ $? != 0 ]]; then
-        LOGE "Cancelled"
+        LOGE "取消"
         if [[ $# == 0 ]]; then
             before_show_menu
         fi
@@ -84,17 +84,17 @@ update() {
     fi
     bash <(curl -Ls https://raw.githubusercontent.com/xxf185/s-ui/master/install.sh)
     if [[ $? == 0 ]]; then
-        LOGI "Update is complete, Panel has automatically restarted "
+        LOGI "更新完成，面板已自动重启 "
         exit 0
     fi
 }
 
 custom_version() {
-    echo "Enter the panel version (like 0.0.1):"
+    echo "输入面板版本 (例如 0.0.1):"
     read panel_version
 
     if [ -z "$panel_version" ]; then
-        echo "Panel version cannot be empty. Exiting."
+        echo "面板版本不能为空.退出."
     exit 1
     fi
 
@@ -102,12 +102,12 @@ custom_version() {
 
     install_command="bash <(curl -Ls $download_link) $panel_version"
 
-    echo "Downloading and installing panel version $panel_version..."
+    echo "下载并安装面板版本 $panel_version..."
     eval $install_command
 }
 
 uninstall() {
-    confirm "Are you sure you want to uninstall the panel?" "n"
+    confirm "您确定要卸载该面板吗?" "n"
     if [[ $? != 0 ]]; then
         if [[ $# == 0 ]]; then
             show_menu
@@ -123,7 +123,7 @@ uninstall() {
     rm /usr/local/s-ui/ -rf
 
     echo ""
-    echo -e "Uninstalled Successfully, If you want to remove this script, then after exiting the script run ${green}rm /usr/local/s-ui -f${plain} to delete it."
+    echo -e "卸载成功，如果要删除此脚本，请在退出脚本后运行 ${green}rm /usr/local/s-ui -f${plain} 删除它."
     echo ""
 
     if [[ $# == 0 ]]; then
@@ -132,8 +132,8 @@ uninstall() {
 }
 
 reset_admin() {
-    echo "It is not recommended to set admin's credentials to default!"
-    confirm "Are you sure you want to reset admin's credentials to default ?" "n"
+    echo "不建议将用户名密码设置为默认!"
+    confirm "您确定要将用户名密码重置为默认值吗 ?" "n"
     if [[ $? == 0 ]]; then
         /usr/local/s-ui/sui admin -reset
     fi
@@ -141,9 +141,9 @@ reset_admin() {
 }
 
 set_admin() {
-    echo "It is not recommended to set admin's credentials to a complex text."
-    read -p "Please set up your username:" config_account
-    read -p "Please set up your password:" config_password
+    echo "不建议将用户名密码设置为复杂的文本."
+    read -p "请设置您的用户名:" config_account
+    read -p "请设置您的密码:" config_password
     /usr/local/s-ui/sui admin -username ${config_account} -password ${config_password}
     before_show_menu
 }
@@ -154,7 +154,7 @@ view_admin() {
 }
 
 reset_setting() {
-    confirm "Are you sure you want to reset settings to default ?" "n"
+    confirm "您确定要将设置重置为默认设置吗 ?" "n"
     if [[ $? == 0 ]]; then
         /usr/local/s-ui/sui setting -reset
     fi
@@ -162,17 +162,17 @@ reset_setting() {
 }
 
 set_setting() {
-    echo -e "Enter the ${yellow}panel port${plain} (leave blank for existing/default value):"
+    echo -e "输入 ${yellow}面板端口${plain} (回车默认):"
     read config_port
-    echo -e "Enter the ${yellow}panel path${plain} (leave blank for existing/default value):"
+    echo -e "输入 ${yellow}面板路径${plain} (回车默认):"
     read config_path
 
-    echo -e "Enter the ${yellow}subscription port${plain} (leave blank for existing/default value):"
+    echo -e "输入 ${yellow}订阅端口${plain} (回车默认):"
     read config_subPort
-    echo -e "Enter the ${yellow}subscription path${plain} (leave blank for existing/default value):" 
+    echo -e "输入 ${yellow}订阅路径${plain} (回车默认):" 
     read config_subPath
 
-    echo -e "${yellow}Initializing, please wait...${plain}"
+    echo -e "${yellow}正在初始化...${plain}"
     params=""
     [ -z "$config_port" ] || params="$params -port $config_port"
     [ -z "$config_path" ] || params="$params -path $config_path"
@@ -191,10 +191,10 @@ view_setting() {
 view_uri() {
     info=$(/usr/local/s-ui/sui uri)
     if [[ $? != 0 ]]; then
-        LOGE "Get current uri error"
+        LOGE "获取当前 uri 错误"
         before_show_menu
     fi
-    LOGI "You may access the Panel with following URL(s):"
+    LOGI "您可以通过以下方式访问面板:"
     echo -e "${green}${info}${plain}"
 }
 
@@ -202,15 +202,15 @@ start() {
     check_status $1
     if [[ $? == 0 ]]; then
         echo ""
-        LOGI -e "${1} is running, No need to start again, If you need to restart, please select restart"
+        LOGI -e "${1} 正在运行，无需再次启动"
     else
         systemctl start $1
         sleep 2
         check_status $1
         if [[ $? == 0 ]]; then
-            LOGI "${1} Started Successfully"
+            LOGI "${1} 已成功启动"
         else
-            LOGE "Failed to start ${1}, Probably because it takes longer than two seconds to start, Please check the log information later"
+            LOGE "启动失败 ${1},"
         fi
     fi
 
@@ -223,15 +223,15 @@ stop() {
     check_status $1
     if [[ $? == 1 ]]; then
         echo ""
-        LOGI "${1} stopped, No need to stop again!"
+        LOGI "${1} 停止成功!"
     else
         systemctl stop $1
         sleep 2
         check_status
         if [[ $? == 1 ]]; then
-            LOGI "${1} stopped successfully"
+            LOGI "${1} 成功停止"
         else
-            LOGE "Failed to stop ${1}, Probably because the stop time exceeds two seconds, Please check the log information later"
+            LOGE "停止失败 ${1},"
         fi
     fi
 
@@ -245,9 +245,9 @@ restart() {
     sleep 2
     check_status $1
     if [[ $? == 0 ]]; then
-        LOGI "${1} Restarted successfully"
+        LOGI "${1} 重启成功"
     else
-        LOGE "Failed to restart ${1}, Probably because it takes longer than two seconds to start, Please check the log information later"
+        LOGE "重启失败 ${1}"
     fi
     if [[ $# == 1 ]]; then
         before_show_menu
@@ -264,9 +264,9 @@ status() {
 enable() {
     systemctl enable $1
     if [[ $? == 0 ]]; then
-        LOGI "Set ${1} to boot automatically on startup successfully"
+        LOGI "Set ${1} 开机自启成功"
     else
-        LOGE "Failed to set ${1} Autostart"
+        LOGE "设置失败 ${1} 自动启动"
     fi
 
     if [[ $# == 1 ]]; then
@@ -277,9 +277,9 @@ enable() {
 disable() {
     systemctl disable $1
     if [[ $? == 0 ]]; then
-        LOGI "Autostart ${1} Cancelled successfully"
+        LOGI "自启 ${1} 已成功取消"
     else
-        LOGE "Failed to cancel ${1} autostart"
+        LOGE "取消失败 ${1} 开机自启"
     fi
 
     if [[ $# == 1 ]]; then
