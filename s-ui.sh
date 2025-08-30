@@ -302,7 +302,7 @@ update_shell() {
         before_show_menu
     else
         chmod +x /usr/bin/s-ui
-        LOGI "升级脚本成功，请重新运行脚本" && exit 0
+        LOGI "升级脚本成功" && exit 0
     fi
 }
 
