@@ -573,28 +573,28 @@ ssl_cert_issue() {
         rm -rf ~/.acme.sh/${domain}
         exit 1
     else
-        LOGE "issue certs succeed,installing certs..."
+        LOGE "证书已颁发..."
     fi
     ~/.acme.sh/acme.sh --installcert -d ${domain} \
         --key-file /root/cert/${domain}/privkey.pem \
         --fullchain-file /root/cert/${domain}/fullchain.pem
 
     if [ $? -ne 0 ]; then
-        LOGE "install certs failed,exit"
+        LOGE "安装证书失败"
         rm -rf ~/.acme.sh/${domain}
         exit 1
     else
-        LOGI "install certs succeed,enable auto renew..."
+        LOGI "证书安装成功，开启自动更新..."
     fi
 
     ~/.acme.sh/acme.sh --upgrade --auto-upgrade
     if [ $? -ne 0 ]; then
-        LOGE "auto renew failed, certs details:"
+        LOGE "更新证书失败:"
         ls -lah cert/*
         chmod 755 $certPath/*
         exit 1
     else
-        LOGI "auto renew succeed, certs details:"
+        LOGI "更新证书详情:"
         ls -lah cert/*
         chmod 755 $certPath/*
     fi
