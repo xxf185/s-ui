@@ -565,7 +565,7 @@ ssl_cert_issue() {
     if [[ ${WebPort} -gt 65535 || ${WebPort} -lt 1 ]]; then
         LOGE “您输入 ${WebPort} 无效，将使用默认端口"
     fi
-    LOGI "将使用:${WebPort} 颁发证书,请确认此端口开放..."
+    LOGI "将使用:${WebPort} 端口颁发证书,请确认此端口开放..."
     ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
     ~/.acme.sh/acme.sh --issue -d ${domain} --standalone --httpport ${WebPort}
     if [ $? -ne 0 ]; then
