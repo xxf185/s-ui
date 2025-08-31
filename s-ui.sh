@@ -657,11 +657,11 @@ ssl_cert_issue_CF() {
 
                 LOGD "请设置注册邮箱:"
                 read -p "Input your email here: " CF_AccountEmail
-                LOGD "Your registered email address is: ${CF_AccountEmail}"
+                LOGD "你的注册邮箱为: ${CF_AccountEmail}"
 
                 ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
                 if [ $? -ne 0 ]; then
-                    LOGE "Default CA, Let's Encrypt failed, script exiting..."
+                    LOGE "默认 CA，Let's Encrypt 失败，脚本退出..."
                     exit 1
                 fi
 
@@ -670,15 +670,15 @@ ssl_cert_issue_CF() {
 
                 ~/.acme.sh/acme.sh --issue --dns dns_cf -d ${CF_Domain} -d *.${CF_Domain} $force_flag --log
                 if [ $? -ne 0 ]; then
-                    LOGE "Certificate issuance failed, script exiting..."
+                    LOGE "证书颁发失败，脚本退出..."
                     exit 1
                 else
-                    LOGI "Certificate issued Successfully, Installing..."
+                    LOGI "证书颁发成功，正在安装证书..."
                 fi
 
                 mkdir -p ${certPath}/${CF_Domain}
                 if [ $? -ne 0 ]; then
-                    LOGE "Failed to create directory: ${certPath}/${CF_Domain}"
+                    LOGE "无法创建目录: ${certPath}/${CF_Domain}"
                     exit 1
                 fi
 
@@ -687,18 +687,18 @@ ssl_cert_issue_CF() {
                     --key-file ${certPath}/${CF_Domain}/privkey.pem
 
                 if [ $? -ne 0 ]; then
-                    LOGE "Certificate installation failed, script exiting..."
+                    LOGE "证书安装失败，脚本退出..."
                     exit 1
                 else
-                    LOGI "Certificate installed Successfully, Turning on automatic updates..."
+                    LOGI "证书安装成功，正在开启自动更新..."
                 fi
 
                 ~/.acme.sh/acme.sh --upgrade --auto-upgrade
                 if [ $? -ne 0 ]; then
-                    LOGE "Auto update setup failed, script exiting..."
+                    LOGE "自动更新设置失败，脚本退出..."
                     exit 1
                 else
-                    LOGI "The certificate is installed and auto-renewal is turned on."
+                    LOGI "证书已安装，且自动更新功能已开启."
                     ls -lah ${certPath}/${CF_Domain}
                     chmod 755 ${certPath}/${CF_Domain}
                 fi
@@ -706,11 +706,11 @@ ssl_cert_issue_CF() {
             show_menu
             ;;
         3)
-            echo "Exiting..."
+            echo "退出..."
             show_menu
             ;;
         *)
-            echo "Invalid choice, please select again."
+            echo "选择无效."
             show_menu
             ;;
     esac
@@ -719,13 +719,13 @@ ssl_cert_issue_CF() {
 generate_self_signed_cert() {
     cert_dir="/etc/sing-box"
     mkdir -p "$cert_dir"
-    LOGI "Choose certificate type:"
+    LOGI "选择证书类型:"
     echo -e "${green}\t1.${plain} Ed25519 (*recommended*)"
     echo -e "${green}\t2.${plain} RSA 2048"
     echo -e "${green}\t3.${plain} RSA 4096"
     echo -e "${green}\t4.${plain} ECDSA prime256v1"
     echo -e "${green}\t5.${plain} ECDSA secp384r1"
-    read -p "Enter your choice [1-5, default 1]: " cert_type
+    read -p "请选择[1-5, default 1]: " cert_type
     cert_type=${cert_type:-1}
 
     case "$cert_type" in
@@ -755,38 +755,37 @@ generate_self_signed_cert() {
             ;;
     esac
 
-    LOGI "Generating self-signed certificate ($algo)..."
+    LOGI "生成自签名证书 ($algo)..."
     sudo openssl req -x509 -nodes -days 3650 $key_opt \
         -keyout "${cert_dir}/self.key" \
         -out "${cert_dir}/self.crt" \
         -subj "/CN=myserver"
     if [[ $? -eq 0 ]]; then
         sudo chmod 600 "${cert_dir}/self."*
-        LOGI "Self-signed certificate generated successfully!"
-        LOGI "Certificate path: ${cert_dir}/self.crt"
-        LOGI "Key path: ${cert_dir}/self.key"
+        LOGI "自签名证书生成成功!"
+        LOGI "证书路径: ${cert_dir}/self.crt"
+        LOGI "密匙路径: ${cert_dir}/self.key"
     else
-        LOGE "Failed to generate self-signed certificate."
+        LOGE "无法生成自签名证书."
     fi
     before_show_menu
 }
 
 show_usage() {
-    echo -e "S-UI 菜单"
+    echo -e "s-ui 管理脚本使用方法:"
     echo -e "------------------------------------------"
-    echo -e "SUBCOMMANDS:" 
-    echo -e "s-ui              - Admin Management Script"
-    echo -e "s-ui start        - 启动 s-ui"
-    echo -e "s-ui stop         - 停止 s-ui"
-    echo -e "s-ui restart      - 重启 s-ui"
-    echo -e "s-ui status       - 状态 s-ui"
-    echo -e "s-ui enable       - 设置开机自启"
-    echo -e "s-ui disable      - 取消开机自启"
-    echo -e "s-ui log          - 查看日志"
-    echo -e "s-ui update       - 更新"
-    echo -e "s-ui install      - 安装"
-    echo -e "s-ui uninstall    - 卸载"
-    echo -e "s-ui help         - Control Menu Usage"
+    echo -e "子命令:" 
+    echo -e "s-ui              - 显示管理菜单 (功能更多)"
+    echo -e "s-ui start        - 启动 s-ui 面板"
+    echo -e "s-ui stop         - 停止 s-ui 面板"
+    echo -e "s-ui restart      - 重启 s-ui 面板"
+    echo -e "s-ui status       - 查看 s-ui 状态"
+    echo -e "s-ui enable       - 设置 s-ui 开机自启"
+    echo -e "s-ui disable      - 取消 s-ui 开机自启"
+    echo -e "s-ui log          - 查看 s-ui 日志"
+    echo -e "s-ui update       - 更新 s-ui 面板"
+    echo -e "s-ui install      - 安装 s-ui 面板"
+    echo -e "s-ui uninstall    - 卸载 s-ui 面板"
     echo -e "------------------------------------------"
 }
 
@@ -796,24 +795,24 @@ show_menu() {
 ————————————————————————————————
   ${green}0.${plain} 退出
 ————————————————————————————————
-  ${green}1.${plain} 安装
-  ${green}2.${plain} 更新
+  ${green}1.${plain} 安装 s-ui
+  ${green}2.${plain} 更新 x-ui
   ${green}3.${plain} 指定版本
-  ${green}4.${plain} 卸载
+  ${green}4.${plain} 卸载 x-ui
 ————————————————————————————————
-  ${green}5.${plain} 重置用户名密码默认
+  ${green}5.${plain} 重置用户名密码
   ${green}6.${plain} 设置用户名密码
   ${green}7.${plain} 查看用户名密码
 ————————————————————————————————
-  ${green}8.${plain} 重置面板
+  ${green}8.${plain} 重置面板设置
   ${green}9.${plain} 设置面板
-  ${green}10.${plain} 查看面板设置
+  ${green}10.${plain} 查看当前面板设置
 ————————————————————————————————
-  ${green}11.${plain} S-UI 启动
-  ${green}12.${plain} S-UI 停止
-  ${green}13.${plain} S-UI 重启
-  ${green}14.${plain} S-UI 状态
-  ${green}15.${plain} S-UI 日志
+  ${green}11.${plain}  启动 S-UI
+  ${green}12.${plain}  停止 S-UI
+  ${green}13.${plain}  重启 S-UI
+  ${green}14.${plain}  查看 S-UI 状态
+  ${green}15.${plain}  查看 S-UI 日志
   ${green}16.${plain} S-UI 设置开机自启
   ${green}17.${plain} S-UI 取消开机自启
 ————————————————————————————————
@@ -890,7 +889,7 @@ show_menu() {
         ssl_cert_issue_CF
         ;;
     *)
-        LOGE "Please enter the correct number [0-20]"
+        LOGE "请选择 [0-20]"
         ;;
     esac
 }
