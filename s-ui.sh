@@ -615,18 +615,18 @@ ssl_cert_issue_CF() {
             force_flag=""
             if [ "$choice" -eq 2 ]; then
                 force_flag="--force"
-                echo "Forcing SSL certificate reissuance..."
+                echo "强制更新证书..."
             else
-                echo "Starting SSL certificate issuance..."
+                echo "开始颁发证书..."
             fi
             
-            LOGD "******Instructions for use******"
-            LOGI "This Acme script requires the following data:"
-            LOGI "1.Cloudflare Registered e-mail"
+            LOGD "******使用说明******"
+            LOGI "此脚本需要以下资料:"
+            LOGI "1.Cloudflare 注册邮箱"
             LOGI "2.Cloudflare Global API Key"
-            LOGI "3.The domain name that has been resolved DNS to the current server by Cloudflare"
-            LOGI "4.The script applies for a certificate. The default installation path is /root/cert "
-            confirm "Confirmed?[y/n]" "y"
+            LOGI "3.域名解析到 Cloudflare"
+            LOGI "4.证书路径: /root/cert "
+            confirm "确认继续?[y/n]" "y"
             if [ $? -eq 0 ]; then
                 if ! command -v ~/.acme.sh/acme.sh &>/dev/null; then
                     echo "acme.sh could not be found. Installing..."
