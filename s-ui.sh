@@ -17,7 +17,7 @@ function LOGI() {
     echo -e "${green}[INF] $* ${plain}"
 }
 
-[[ $EUID -ne 0 ]] && LOGE "错误:必须以root用户运行此脚本! \n" && exit 1
+[[ $EUID -ne 0 ]] && LOGE "ERROR: You must be root to run this script! \n" && exit 1
 
 if [[ -f /etc/os-release ]]; then
     source /etc/os-release
@@ -26,11 +26,11 @@ elif [[ -f /usr/lib/os-release ]]; then
     source /usr/lib/os-release
     release=$ID
 else
-    echo "检查系统版本失败，请联系脚本作者!" >&2
+    echo "Failed to check the system OS, please contact the author!" >&2
     exit 1
 fi
 
-echo "系统: $release"
+echo "The OS release is: $release"
 
 confirm() {
     if [[ $# > 1 ]]; then
@@ -49,7 +49,7 @@ confirm() {
 }
 
 confirm_restart() {
-    confirm "重新启动 ${1} 服务" "y"
+    confirm "Restart the ${1} service" "y"
     if [[ $? == 0 ]]; then
         restart
     else
@@ -58,12 +58,12 @@ confirm_restart() {
 }
 
 before_show_menu() {
-    echo && echo -n -e "${yellow}按 Enter 键返回主菜单: ${plain}" && read temp
+    echo && echo -n -e "${yellow}Press enter to return to the main menu: ${plain}" && read temp
     show_menu
 }
 
 install() {
-    bash <(curl -Ls https://raw.githubusercontent.com/xxf185/s-ui/master/install.sh)
+    bash <(curl -Ls https://raw.githubusercontent.com/alireza0/s-ui/main/install.sh)
     if [[ $? == 0 ]]; then
         if [[ $# == 0 ]]; then
             start
@@ -74,40 +74,40 @@ install() {
 }
 
 update() {
-    confirm "此功能将强制重新安装最新版本，数据不会丢失。是否继续?" "n"
+    confirm "This function will forcefully reinstall the latest version, and the data will not be lost. Do you want to continue?" "n"
     if [[ $? != 0 ]]; then
-        LOGE "取消"
+        LOGE "Cancelled"
         if [[ $# == 0 ]]; then
             before_show_menu
         fi
         return 0
     fi
-    bash <(curl -Ls https://raw.githubusercontent.com/xxf185/s-ui/master/install.sh)
+    bash <(curl -Ls https://raw.githubusercontent.com/alireza0/s-ui/main/install.sh)
     if [[ $? == 0 ]]; then
-        LOGI "更新完成，面板已自动重启 "
+        LOGI "Update is complete, Panel has automatically restarted "
         exit 0
     fi
 }
 
 custom_version() {
-    echo "输入面板版本 (例如 0.0.1):"
+    echo "Enter the panel version (like 0.0.1):"
     read panel_version
 
     if [ -z "$panel_version" ]; then
-        echo "面板版本不能为空"
+        echo "Panel version cannot be empty. Exiting."
     exit 1
     fi
 
-    download_link="https://raw.githubusercontent.com/xxf185/s-ui/master/install.sh"
+    download_link="https://raw.githubusercontent.com/alireza0/s-ui/master/install.sh"
 
     install_command="bash <(curl -Ls $download_link) $panel_version"
 
-    echo "下载并安装面板版本 $panel_version..."
+    echo "Downloading and installing panel version $panel_version..."
     eval $install_command
 }
 
 uninstall() {
-    confirm "您确定要卸载该面板吗?" "n"
+    confirm "Are you sure you want to uninstall the panel?" "n"
     if [[ $? != 0 ]]; then
         if [[ $# == 0 ]]; then
             show_menu
@@ -123,7 +123,7 @@ uninstall() {
     rm /usr/local/s-ui/ -rf
 
     echo ""
-    echo -e "卸载成功，如果要删除此脚本，请在退出脚本后运行 ${green}rm /usr/local/s-ui -f${plain} 删除它."
+    echo -e "Uninstalled Successfully, If you want to remove this script, then after exiting the script run ${green}rm /usr/local/s-ui -f${plain} to delete it."
     echo ""
 
     if [[ $# == 0 ]]; then
@@ -132,8 +132,8 @@ uninstall() {
 }
 
 reset_admin() {
-    echo "不建议将用户名密码设置为默认!"
-    confirm "您确定要将用户名密码重置为默认值吗 ?" "n"
+    echo "It is not recommended to set admin's credentials to default!"
+    confirm "Are you sure you want to reset admin's credentials to default ?" "n"
     if [[ $? == 0 ]]; then
         /usr/local/s-ui/sui admin -reset
     fi
@@ -141,9 +141,9 @@ reset_admin() {
 }
 
 set_admin() {
-    echo "不建议将用户名密码设置为复杂的文本."
-    read -p "请设置您的用户名:" config_account
-    read -p "请设置您的密码:" config_password
+    echo "It is not recommended to set admin's credentials to a complex text."
+    read -p "Please set up your username:" config_account
+    read -p "Please set up your password:" config_password
     /usr/local/s-ui/sui admin -username ${config_account} -password ${config_password}
     before_show_menu
 }
@@ -154,7 +154,7 @@ view_admin() {
 }
 
 reset_setting() {
-    confirm "您确定要将设置重置为默认设置吗 ?" "n"
+    confirm "Are you sure you want to reset settings to default ?" "n"
     if [[ $? == 0 ]]; then
         /usr/local/s-ui/sui setting -reset
     fi
@@ -162,17 +162,17 @@ reset_setting() {
 }
 
 set_setting() {
-    echo -e "输入 ${yellow}面板端口${plain} (回车默认):"
+    echo -e "Enter the ${yellow}panel port${plain} (leave blank for existing/default value):"
     read config_port
-    echo -e "输入 ${yellow}面板路径${plain} (回车默认):"
+    echo -e "Enter the ${yellow}panel path${plain} (leave blank for existing/default value):"
     read config_path
 
-    echo -e "输入 ${yellow}订阅端口${plain} (回车默认):"
+    echo -e "Enter the ${yellow}subscription port${plain} (leave blank for existing/default value):"
     read config_subPort
-    echo -e "输入 ${yellow}订阅路径${plain} (回车默认):" 
+    echo -e "Enter the ${yellow}subscription path${plain} (leave blank for existing/default value):" 
     read config_subPath
 
-    echo -e "${yellow}正在初始化...${plain}"
+    echo -e "${yellow}Initializing, please wait...${plain}"
     params=""
     [ -z "$config_port" ] || params="$params -port $config_port"
     [ -z "$config_path" ] || params="$params -path $config_path"
@@ -191,10 +191,10 @@ view_setting() {
 view_uri() {
     info=$(/usr/local/s-ui/sui uri)
     if [[ $? != 0 ]]; then
-        LOGE "获取当前 uri 错误"
+        LOGE "Get current uri error"
         before_show_menu
     fi
-    LOGI "您可以通过以下方式访问面板:"
+    LOGI "You may access the Panel with following URL(s):"
     echo -e "${green}${info}${plain}"
 }
 
@@ -202,15 +202,15 @@ start() {
     check_status $1
     if [[ $? == 0 ]]; then
         echo ""
-        LOGI -e "${1} 正在运行，无需再次启动"
+        LOGI -e "${1} is running, No need to start again, If you need to restart, please select restart"
     else
         systemctl start $1
         sleep 2
         check_status $1
         if [[ $? == 0 ]]; then
-            LOGI "${1} 已成功启动"
+            LOGI "${1} Started Successfully"
         else
-            LOGE "启动失败 ${1},"
+            LOGE "Failed to start ${1}, Probably because it takes longer than two seconds to start, Please check the log information later"
         fi
     fi
 
@@ -223,15 +223,15 @@ stop() {
     check_status $1
     if [[ $? == 1 ]]; then
         echo ""
-        LOGI "${1} 停止成功!"
+        LOGI "${1} stopped, No need to stop again!"
     else
         systemctl stop $1
         sleep 2
         check_status
         if [[ $? == 1 ]]; then
-            LOGI "${1} 成功停止"
+            LOGI "${1} stopped successfully"
         else
-            LOGE "停止失败 ${1},"
+            LOGE "Failed to stop ${1}, Probably because the stop time exceeds two seconds, Please check the log information later"
         fi
     fi
 
@@ -245,9 +245,9 @@ restart() {
     sleep 2
     check_status $1
     if [[ $? == 0 ]]; then
-        LOGI "${1} 重启成功"
+        LOGI "${1} Restarted successfully"
     else
-        LOGE "重启失败 ${1}"
+        LOGE "Failed to restart ${1}, Probably because it takes longer than two seconds to start, Please check the log information later"
     fi
     if [[ $# == 1 ]]; then
         before_show_menu
@@ -264,9 +264,9 @@ status() {
 enable() {
     systemctl enable $1
     if [[ $? == 0 ]]; then
-        LOGI "设置 ${1} 开机自启成功"
+        LOGI "Set ${1} to boot automatically on startup successfully"
     else
-        LOGE "设置 ${1} 开机自启失败"
+        LOGE "Failed to set ${1} Autostart"
     fi
 
     if [[ $# == 1 ]]; then
@@ -277,9 +277,9 @@ enable() {
 disable() {
     systemctl disable $1
     if [[ $? == 0 ]]; then
-        LOGI "开机自启 ${1} 已成功取消"
+        LOGI "Autostart ${1} Cancelled successfully"
     else
-        LOGE "取消失败 ${1} 开机自启"
+        LOGE "Failed to cancel ${1} autostart"
     fi
 
     if [[ $# == 1 ]]; then
@@ -295,14 +295,14 @@ show_log() {
 }
 
 update_shell() {
-    wget -O /usr/bin/s-ui -N --no-check-certificate https://github.com/xxf185/s-ui/raw/master/s-ui.sh
+    wget -O /usr/bin/s-ui -N --no-check-certificate https://github.com/alireza0/s-ui/raw/main/s-ui.sh
     if [[ $? != 0 ]]; then
         echo ""
-        LOGE "下载脚本失败，请检查机器是否可以连接Github"
+        LOGE "Failed to download script, Please check whether the machine can connect Github"
         before_show_menu
     else
         chmod +x /usr/bin/s-ui
-        LOGI "升级脚本成功" && exit 0
+        LOGI "Upgrade script succeeded, Please rerun the script" && exit 0
     fi
 }
 
@@ -331,7 +331,7 @@ check_uninstall() {
     check_status s-ui
     if [[ $? != 2 ]]; then
         echo ""
-        LOGE "面板已安装"
+        LOGE "Panel is already installed, Please do not reinstall"
         if [[ $# == 0 ]]; then
             before_show_menu
         fi
@@ -345,7 +345,7 @@ check_install() {
     check_status s-ui
     if [[ $? == 2 ]]; then
         echo ""
-        LOGE "请先安装面板"
+        LOGE "Please install the panel first"
         if [[ $# == 0 ]]; then
             before_show_menu
         fi
@@ -359,15 +359,15 @@ show_status() {
     check_status $1
     case $? in
     0)
-        echo -e "${1} 状态: ${green}运行${plain}"
+        echo -e "${1} state: ${green}Running${plain}"
         show_enable_status $1
         ;;
     1)
-        echo -e "${1} 状态: ${yellow}未运行${plain}"
+        echo -e "${1} state: ${yellow}Not Running${plain}"
         show_enable_status $1
         ;;
     2)
-        echo -e "${1} 状态: ${red}未安装${plain}"
+        echo -e "${1} state: ${red}Not Installed${plain}"
         ;;
     esac
 }
@@ -375,9 +375,9 @@ show_status() {
 show_enable_status() {
     check_enabled $1
     if [[ $? == 0 ]]; then
-        echo -e "开机自启 ${1} : ${green}Yes${plain}"
+        echo -e "Start ${1} automatically: ${green}Yes${plain}"
     else
-        echo -e "开机自启 ${1} : ${red}No${plain}"
+        echo -e "Start ${1} automatically: ${red}No${plain}"
     fi
 }
 
@@ -393,17 +393,17 @@ check_s-ui_status() {
 show_s-ui_status() {
     check_s-ui_status
     if [[ $? == 0 ]]; then
-        echo -e "s-ui 状态: ${green}运行${plain}"
+        echo -e "s-ui state: ${green}Running${plain}"
     else
-        echo -e "s-ui 状态: ${red}未运行${plain}"
+        echo -e "s-ui state: ${red}Not Running${plain}"
     fi
 }
 
 bbr_menu() {
-    echo -e "${green}\t1.${plain} 启用 BBR"
-    echo -e "${green}\t2.${plain} 禁用 BBR"
-    echo -e "${green}\t0.${plain} 返回主菜单"
-    read -p "请选择: " choice
+    echo -e "${green}\t1.${plain} Enable BBR"
+    echo -e "${green}\t2.${plain} Disable BBR"
+    echo -e "${green}\t0.${plain} Back to Main Menu"
+    read -p "Choose an option: " choice
     case "$choice" in
     0)
         show_menu
@@ -414,28 +414,28 @@ bbr_menu() {
     2)
         disable_bbr
         ;;
-    *) echo "选择错误" ;;
+    *) echo "Invalid choice" ;;
     esac
 }
 
 disable_bbr() {
     if ! grep -q "net.core.default_qdisc=fq" /etc/sysctl.conf || ! grep -q "net.ipv4.tcp_congestion_control=bbr" /etc/sysctl.conf; then
-        echo -e "${yellow}BBR 当前未启用.${plain}"
+        echo -e "${yellow}BBR is not currently enabled.${plain}"
         exit 0
     fi
     sed -i 's/net.core.default_qdisc=fq/net.core.default_qdisc=pfifo_fast/' /etc/sysctl.conf
     sed -i 's/net.ipv4.tcp_congestion_control=bbr/net.ipv4.tcp_congestion_control=cubic/' /etc/sysctl.conf
     sysctl -p
     if [[ $(sysctl net.ipv4.tcp_congestion_control | awk '{print $3}') == "cubic" ]]; then
-        echo -e "${green}BBR已成功替换为CUBIC.${plain}"
+        echo -e "${green}BBR has been replaced with CUBIC successfully.${plain}"
     else
-        echo -e "${red}无法用 CUBIC 替换 BBR。请检查您的系统配置.${plain}"
+        echo -e "${red}Failed to replace BBR with CUBIC. Please check your system configuration.${plain}"
     fi
 }
 
 enable_bbr() {
     if grep -q "net.core.default_qdisc=fq" /etc/sysctl.conf && grep -q "net.ipv4.tcp_congestion_control=bbr" /etc/sysctl.conf; then
-        echo -e "${green}BBR已启用!${plain}"
+        echo -e "${green}BBR is already enabled!${plain}"
         exit 0
     fi
     case "${release}" in
@@ -452,7 +452,7 @@ enable_bbr() {
         pacman -Sy --noconfirm ca-certificates
         ;;
     *)
-        echo -e "${red}不支持的操作系统.${plain}\n"
+        echo -e "${red}Unsupported operating system. Please check the script and install the necessary packages manually.${plain}\n"
         exit 1
         ;;
     esac
@@ -460,56 +460,56 @@ enable_bbr() {
     echo "net.ipv4.tcp_congestion_control=bbr" | tee -a /etc/sysctl.conf
     sysctl -p
     if [[ $(sysctl net.ipv4.tcp_congestion_control | awk '{print $3}') == "bbr" ]]; then
-        echo -e "${green}BBR已成功启用.${plain}"
+        echo -e "${green}BBR has been enabled successfully.${plain}"
     else
-        echo -e "${red}无法启用 BBR。请检查您的系统配置.${plain}"
+        echo -e "${red}Failed to enable BBR. Please check your system configuration.${plain}"
     fi
 }
 
 install_acme() {
     cd ~
-    LOGI "安装 acme..."
+    LOGI "install acme..."
     curl https://get.acme.sh | sh
     if [ $? -ne 0 ]; then
-        LOGE "安装 acme 失败"
+        LOGE "install acme failed"
         return 1
     else
-        LOGI "安装 acme 成功"
+        LOGI "install acme succeed"
     fi
     return 0
 }
 
 ssl_cert_issue_main() {
-    echo -e "${green}\t1.${plain} 获取证书"
-    echo -e "${green}\t2.${plain} 撤销证书"
-    echo -e "${green}\t3.${plain} 更新证书"
-    echo -e "${green}\t4.${plain} 自签名证书"
-    read -p "请选择: " choice
+    echo -e "${green}\t1.${plain} Get SSL"
+    echo -e "${green}\t2.${plain} Revoke"
+    echo -e "${green}\t3.${plain} Force Renew"
+    echo -e "${green}\t4.${plain} Self-signed Certificate"
+    read -p "Choose an option: " choice
     case "$choice" in
         1) ssl_cert_issue ;;
         2) 
             local domain=""
-            read -p "请输入您的域名: " domain
+            read -p "Please enter your domain name to revoke the certificate: " domain
             ~/.acme.sh/acme.sh --revoke -d ${domain}
-            LOGI "证书已撤销"
+            LOGI "Certificate revoked"
             ;;
         3)
             local domain=""
-            read -p "请输入您的域名: " domain
+            read -p "Please enter your domain name to forcefully renew an SSL certificate: " domain
             ~/.acme.sh/acme.sh --renew -d ${domain} --force ;;
         4)
             generate_self_signed_cert
             ;;
-        *) echo "选择错误" ;;
+        *) echo "Invalid choice" ;;
     esac
 }
 
 ssl_cert_issue() {
     if ! command -v ~/.acme.sh/acme.sh &>/dev/null; then
-        echo "acme.sh 安装中"
+        echo "acme.sh could not be found. we will install it"
         install_acme
         if [ $? -ne 0 ]; then
-            LOGE "安装 acme 失败"
+            LOGE "install acme failed, please check logs"
             exit 1
         fi
     fi
@@ -527,29 +527,29 @@ ssl_cert_issue() {
         pacman -Sy --noconfirm socat
         ;;
     *)
-        echo -e "${red}不支持的操作系统.${plain}\n"
+        echo -e "${red}Unsupported operating system. Please check the script and install the necessary packages manually.${plain}\n"
         exit 1
         ;;
     esac
     if [ $? -ne 0 ]; then
-        LOGE "安装socat失败"
+        LOGE "install socat failed, please check logs"
         exit 1
     else
-        LOGI "安装socat成功..."
+        LOGI "install socat succeed..."
     fi
 
     local domain=""
-    read -p "请输入您的域名:" domain
-    LOGD "您的域名是:${domain},check it..."
+    read -p "Please enter your domain name:" domain
+    LOGD "your domain is:${domain},check it..."
     local currentCert=$(~/.acme.sh/acme.sh --list | tail -1 | awk '{print $1}')
 
     if [ ${currentCert} == ${domain} ]; then
         local certInfo=$(~/.acme.sh/acme.sh --list)
-        LOGE "系统此处已有证书，当前证书详情:"
+        LOGE "system already has certs here,can not issue again,current certs details:"
         LOGI "$certInfo"
         exit 1
     else
-        LOGI "您的域名现在可以颁发证书了..."
+        LOGI "your domain is ready for issuing cert now..."
     fi
 
     certPath="/root/cert/${domain}"
@@ -561,40 +561,40 @@ ssl_cert_issue() {
     fi
 
     local WebPort=80
-    read -p "请输入端口，默认80端口:" WebPort
+    read -p "please choose which port do you use,default will be 80 port:" WebPort
     if [[ ${WebPort} -gt 65535 || ${WebPort} -lt 1 ]]; then
-        LOGE “您输入 ${WebPort} 无效，将使用默认端口"
+        LOGE "your input ${WebPort} is invalid,will use default port"
     fi
-    LOGI "将使用:${WebPort} 端口颁发证书,请确认此端口开放..."
+    LOGI "will use port:${WebPort} to issue certs,please make sure this port is open..."
     ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
     ~/.acme.sh/acme.sh --issue -d ${domain} --standalone --httpport ${WebPort}
     if [ $? -ne 0 ]; then
-        LOGE "颁发证书失败"
+        LOGE "issue certs failed,please check logs"
         rm -rf ~/.acme.sh/${domain}
         exit 1
     else
-        LOGE "证书已颁发..."
+        LOGE "issue certs succeed,installing certs..."
     fi
     ~/.acme.sh/acme.sh --installcert -d ${domain} \
         --key-file /root/cert/${domain}/privkey.pem \
         --fullchain-file /root/cert/${domain}/fullchain.pem
 
     if [ $? -ne 0 ]; then
-        LOGE "安装证书失败"
+        LOGE "install certs failed,exit"
         rm -rf ~/.acme.sh/${domain}
         exit 1
     else
-        LOGI "证书安装成功，开启自动更新..."
+        LOGI "install certs succeed,enable auto renew..."
     fi
 
     ~/.acme.sh/acme.sh --upgrade --auto-upgrade
     if [ $? -ne 0 ]; then
-        LOGE "更新证书失败:"
+        LOGE "auto renew failed, certs details:"
         ls -lah cert/*
         chmod 755 $certPath/*
         exit 1
     else
-        LOGI "更新证书详情:"
+        LOGI "auto renew succeed, certs details:"
         ls -lah cert/*
         chmod 755 $certPath/*
     fi
@@ -602,12 +602,11 @@ ssl_cert_issue() {
 
 ssl_cert_issue_CF() {
     echo -E ""
-    LOGD "******使用说明******"
-    echo -E ""
-    echo " 1) 获取Cloudflare证书 "
-    echo " 2) 更新证书 "
-    echo " 3) 返回主菜单"
-    read -p "请选择 [1-3]: " choice
+    LOGD "******Instructions for use******"
+    echo "1) New certificate from Cloudflare"
+    echo "2) Force renew existing Certificates"
+    echo "3) Back to Menu"
+    read -p "Enter your choice [1-3]: " choice
 
     certPath="/root/cert-CF"
 
@@ -616,24 +615,24 @@ ssl_cert_issue_CF() {
             force_flag=""
             if [ "$choice" -eq 2 ]; then
                 force_flag="--force"
-                echo "强制更新证书..."
+                echo "Forcing SSL certificate reissuance..."
             else
-                echo "开始颁发证书..."
+                echo "Starting SSL certificate issuance..."
             fi
             
-            LOGD "******使用说明******"
-            LOGI "此脚本需要以下资料:"
-            LOGI "1.Cloudflare 注册邮箱"
+            LOGD "******Instructions for use******"
+            LOGI "This Acme script requires the following data:"
+            LOGI "1.Cloudflare Registered e-mail"
             LOGI "2.Cloudflare Global API Key"
-            LOGI "3.域名解析到 Cloudflare"
-            LOGI "4.证书路径: /root/cert "
-            confirm "确认继续?[y/n]" "y"
+            LOGI "3.The domain name that has been resolved DNS to the current server by Cloudflare"
+            LOGI "4.The script applies for a certificate. The default installation path is /root/cert "
+            confirm "Confirmed?[y/n]" "y"
             if [ $? -eq 0 ]; then
                 if ! command -v ~/.acme.sh/acme.sh &>/dev/null; then
-                    echo "acme.sh 安装中..."
+                    echo "acme.sh could not be found. Installing..."
                     install_acme
                     if [ $? -ne 0 ]; then
-                        LOGE "安装acme失败 "
+                        LOGE "Install acme failed, please check logs"
                         exit 1
                     fi
                 fi
@@ -646,23 +645,23 @@ ssl_cert_issue_CF() {
                     mkdir -p $certPath
                 fi
 
-                LOGD "请设置你的域名:"
+                LOGD "Please set a domain name:"
                 read -p "Input your domain here: " CF_Domain
-                LOGD "你的域名设置为: ${CF_Domain}"
+                LOGD "Your domain name is set to: ${CF_Domain}"
 
                 CF_GlobalKey=""
                 CF_AccountEmail=""
-                LOGD "请设置 API key:"
+                LOGD "Please set the API key:"
                 read -p "Input your key here: " CF_GlobalKey
-                LOGD "你的API key设置为: ${CF_GlobalKey}"
+                LOGD "Your API key is: ${CF_GlobalKey}"
 
-                LOGD "请设置注册邮箱:"
+                LOGD "Please set up registered email:"
                 read -p "Input your email here: " CF_AccountEmail
-                LOGD "你的注册邮箱为: ${CF_AccountEmail}"
+                LOGD "Your registered email address is: ${CF_AccountEmail}"
 
                 ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
                 if [ $? -ne 0 ]; then
-                    LOGE "默认 CA，Let's Encrypt 失败，脚本退出..."
+                    LOGE "Default CA, Let's Encrypt failed, script exiting..."
                     exit 1
                 fi
 
@@ -671,15 +670,15 @@ ssl_cert_issue_CF() {
 
                 ~/.acme.sh/acme.sh --issue --dns dns_cf -d ${CF_Domain} -d *.${CF_Domain} $force_flag --log
                 if [ $? -ne 0 ]; then
-                    LOGE "证书颁发失败，脚本退出..."
+                    LOGE "Certificate issuance failed, script exiting..."
                     exit 1
                 else
-                    LOGI "证书颁发成功，正在安装证书..."
+                    LOGI "Certificate issued Successfully, Installing..."
                 fi
 
                 mkdir -p ${certPath}/${CF_Domain}
                 if [ $? -ne 0 ]; then
-                    LOGE "无法创建目录: ${certPath}/${CF_Domain}"
+                    LOGE "Failed to create directory: ${certPath}/${CF_Domain}"
                     exit 1
                 fi
 
@@ -688,18 +687,18 @@ ssl_cert_issue_CF() {
                     --key-file ${certPath}/${CF_Domain}/privkey.pem
 
                 if [ $? -ne 0 ]; then
-                    LOGE "证书安装失败，脚本退出..."
+                    LOGE "Certificate installation failed, script exiting..."
                     exit 1
                 else
-                    LOGI "证书安装成功，正在开启自动更新..."
+                    LOGI "Certificate installed Successfully, Turning on automatic updates..."
                 fi
 
                 ~/.acme.sh/acme.sh --upgrade --auto-upgrade
                 if [ $? -ne 0 ]; then
-                    LOGE "自动更新设置失败，脚本退出..."
+                    LOGE "Auto update setup failed, script exiting..."
                     exit 1
                 else
-                    LOGI "证书已安装，且自动更新功能已开启."
+                    LOGI "The certificate is installed and auto-renewal is turned on."
                     ls -lah ${certPath}/${CF_Domain}
                     chmod 755 ${certPath}/${CF_Domain}
                 fi
@@ -707,11 +706,11 @@ ssl_cert_issue_CF() {
             show_menu
             ;;
         3)
-            echo "退出..."
+            echo "Exiting..."
             show_menu
             ;;
         *)
-            echo "选择无效."
+            echo "Invalid choice, please select again."
             show_menu
             ;;
     esac
@@ -720,13 +719,13 @@ ssl_cert_issue_CF() {
 generate_self_signed_cert() {
     cert_dir="/etc/sing-box"
     mkdir -p "$cert_dir"
-    LOGI "选择证书类型:"
+    LOGI "Choose certificate type:"
     echo -e "${green}\t1.${plain} Ed25519 (*recommended*)"
     echo -e "${green}\t2.${plain} RSA 2048"
     echo -e "${green}\t3.${plain} RSA 4096"
     echo -e "${green}\t4.${plain} ECDSA prime256v1"
     echo -e "${green}\t5.${plain} ECDSA secp384r1"
-    read -p "请选择[1-5, default 1]: " cert_type
+    read -p "Enter your choice [1-5, default 1]: " cert_type
     cert_type=${cert_type:-1}
 
     case "$cert_type" in
@@ -756,74 +755,75 @@ generate_self_signed_cert() {
             ;;
     esac
 
-    LOGI "生成自签名证书 ($algo)..."
+    LOGI "Generating self-signed certificate ($algo)..."
     sudo openssl req -x509 -nodes -days 3650 $key_opt \
         -keyout "${cert_dir}/self.key" \
         -out "${cert_dir}/self.crt" \
         -subj "/CN=myserver"
     if [[ $? -eq 0 ]]; then
         sudo chmod 600 "${cert_dir}/self."*
-        LOGI "自签名证书生成成功!"
-        LOGI "证书路径: ${cert_dir}/self.crt"
-        LOGI "密匙路径: ${cert_dir}/self.key"
+        LOGI "Self-signed certificate generated successfully!"
+        LOGI "Certificate path: ${cert_dir}/self.crt"
+        LOGI "Key path: ${cert_dir}/self.key"
     else
-        LOGE "无法生成自签名证书."
+        LOGE "Failed to generate self-signed certificate."
     fi
     before_show_menu
 }
 
 show_usage() {
-    echo -e "s-ui 管理脚本使用方法:"
+    echo -e "S-UI Control Menu Usage"
     echo -e "------------------------------------------"
-    echo -e "子命令:" 
-    echo -e "s-ui              - 显示管理菜单 (功能更多)"
-    echo -e "s-ui start        - 启动 s-ui 面板"
-    echo -e "s-ui stop         - 停止 s-ui 面板"
-    echo -e "s-ui restart      - 重启 s-ui 面板"
-    echo -e "s-ui status       - 查看 s-ui 状态"
-    echo -e "s-ui enable       - 设置 s-ui 开机自启"
-    echo -e "s-ui disable      - 取消 s-ui 开机自启"
-    echo -e "s-ui log          - 查看 s-ui 日志"
-    echo -e "s-ui update       - 更新 s-ui 面板"
-    echo -e "s-ui install      - 安装 s-ui 面板"
-    echo -e "s-ui uninstall    - 卸载 s-ui 面板"
+    echo -e "SUBCOMMANDS:" 
+    echo -e "s-ui              - Admin Management Script"
+    echo -e "s-ui start        - Start s-ui"
+    echo -e "s-ui stop         - Stop s-ui"
+    echo -e "s-ui restart      - Restart s-ui"
+    echo -e "s-ui status       - Current Status of s-ui"
+    echo -e "s-ui enable       - Enable Autostart on OS Startup"
+    echo -e "s-ui disable      - Disable Autostart on OS Startup"
+    echo -e "s-ui log          - Check s-ui Logs"
+    echo -e "s-ui update       - Update"
+    echo -e "s-ui install      - Install"
+    echo -e "s-ui uninstall    - Uninstall"
+    echo -e "s-ui help         - Control Menu Usage"
     echo -e "------------------------------------------"
 }
 
 show_menu() {
   echo -e "
-  ${green}S-UI 管理菜单 ${plain}
+  ${green}S-UI Admin Management Script ${plain}
 ————————————————————————————————
-  ${green}0.${plain} 退出
+  ${green}0.${plain} Exit
 ————————————————————————————————
-  ${green}1.${plain} 安装 s-ui
-  ${green}2.${plain} 更新 x-ui
-  ${green}3.${plain} 指定版本
-  ${green}4.${plain} 卸载 x-ui
+  ${green}1.${plain} Install
+  ${green}2.${plain} Update
+  ${green}3.${plain} Custom Version
+  ${green}4.${plain} Uninstall
 ————————————————————————————————
-  ${green}5.${plain} 重置用户名密码
-  ${green}6.${plain} 设置用户名密码
-  ${green}7.${plain} 查看用户名密码
+  ${green}5.${plain} Reset admin credentials to default
+  ${green}6.${plain} Set admin credentials
+  ${green}7.${plain} View admin credentials
 ————————————————————————————————
-  ${green}8.${plain} 重置面板设置
-  ${green}9.${plain} 设置面板
-  ${green}10.${plain} 查看当前面板设置
+  ${green}8.${plain} Reset Panel Settings
+  ${green}9.${plain} Set Panel settings
+  ${green}10.${plain} View Panel Settings
 ————————————————————————————————
-  ${green}11.${plain}  启动 S-UI
-  ${green}12.${plain}  停止 S-UI
-  ${green}13.${plain}  重启 S-UI
-  ${green}14.${plain}  查看 S-UI 状态
-  ${green}15.${plain}  查看 S-UI 日志
-  ${green}16.${plain}  设置 S-UI 开机自启
-  ${green}17.${plain}  取消 S-UI 开机自启
+  ${green}11.${plain} S-UI Start
+  ${green}12.${plain} S-UI Stop
+  ${green}13.${plain} S-UI Restart
+  ${green}14.${plain} S-UI Check State
+  ${green}15.${plain} S-UI Check Logs
+  ${green}16.${plain} S-UI Enable Autostart
+  ${green}17.${plain} S-UI Disable Autostart
 ————————————————————————————————
-  ${green}18.${plain}  启用&禁用 BBR
-  ${green}19.${plain}  证书管理
-  ${green}20.${plain}  Cloudflare 证书
+  ${green}18.${plain} Enable or Disable BBR
+  ${green}19.${plain} SSL Certificate Management
+  ${green}20.${plain} Cloudflare SSL Certificate
 ————————————————————————————————
  "
     show_status s-ui
-    echo && read -p "请选择 [0-20]: " num
+    echo && read -p "Please enter your selection [0-20]: " num
 
     case "${num}" in
     0)
@@ -890,7 +890,7 @@ show_menu() {
         ssl_cert_issue_CF
         ;;
     *)
-        LOGE "请选择 [0-20]"
+        LOGE "Please enter the correct number [0-20]"
         ;;
     esac
 }
