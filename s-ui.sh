@@ -94,7 +94,7 @@ custom_version() {
     read panel_version
 
     if [ -z "$panel_version" ]; then
-        echo "面板版本不能为空.退出."
+        echo "面板版本不能为空"
     exit 1
     fi
 
