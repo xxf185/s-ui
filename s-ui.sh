@@ -629,10 +629,10 @@ ssl_cert_issue_CF() {
             confirm "确认继续?[y/n]" "y"
             if [ $? -eq 0 ]; then
                 if ! command -v ~/.acme.sh/acme.sh &>/dev/null; then
-                    echo "acme.sh could not be found. Installing..."
+                    echo "acme.sh 安装中..."
                     install_acme
                     if [ $? -ne 0 ]; then
-                        LOGE "Install acme failed, please check logs"
+                        LOGE "安装acme失败 "
                         exit 1
                     fi
                 fi
@@ -645,17 +645,17 @@ ssl_cert_issue_CF() {
                     mkdir -p $certPath
                 fi
 
-                LOGD "Please set a domain name:"
+                LOGD "请设置你的域名:"
                 read -p "Input your domain here: " CF_Domain
-                LOGD "Your domain name is set to: ${CF_Domain}"
+                LOGD "你的域名设置为: ${CF_Domain}"
 
                 CF_GlobalKey=""
                 CF_AccountEmail=""
-                LOGD "Please set the API key:"
+                LOGD "请设置 API key:"
                 read -p "Input your key here: " CF_GlobalKey
-                LOGD "Your API key is: ${CF_GlobalKey}"
+                LOGD "你的API key设置为: ${CF_GlobalKey}"
 
-                LOGD "Please set up registered email:"
+                LOGD "请设置注册邮箱:"
                 read -p "Input your email here: " CF_AccountEmail
                 LOGD "Your registered email address is: ${CF_AccountEmail}"
 
