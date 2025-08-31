@@ -602,11 +602,11 @@ ssl_cert_issue() {
 
 ssl_cert_issue_CF() {
     echo -E ""
-    LOGD "******Instructions for use******"
-    echo "1) New certificate from Cloudflare"
-    echo "2) Force renew existing Certificates"
-    echo "3) Back to Menu"
-    read -p "Enter your choice [1-3]: " choice
+    LOGD "******使用说明 use******"
+    echo "1)  申请Cloudflare证书"
+    echo "2)  强制更新证书"
+    echo "3)  返回主菜单"
+    read -p " 请选择 [1-3]: " choice
 
     certPath="/root/cert-CF"
 
