@@ -813,12 +813,12 @@ show_menu() {
   ${green}13.${plain}  重启 S-UI
   ${green}14.${plain}  查看 S-UI 状态
   ${green}15.${plain}  查看 S-UI 日志
-  ${green}16.${plain} S-UI 设置开机自启
-  ${green}17.${plain} S-UI 取消开机自启
+  ${green}16.${plain}  设置 S-UI 开机自启
+  ${green}17.${plain}  取消 S-UI 开机自启
 ————————————————————————————————
-  ${green}18.${plain} 启用&禁用 BBR
-  ${green}19.${plain} 证书管理
-  ${green}20.${plain} Cloudflare 证书
+  ${green}18.${plain}  启用&禁用 BBR
+  ${green}19.${plain}  证书管理
+  ${green}20.${plain}  Cloudflare 证书
 ————————————————————————————————
  "
     show_status s-ui
