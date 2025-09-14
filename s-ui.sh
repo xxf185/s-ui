@@ -17,7 +17,7 @@ function LOGI() {
     echo -e "${green}[INF] $* ${plain}"
 }
 
-[[ $EUID -ne 0 ]] && LOGE "ERROR: You must be root to run this script! \n" && exit 1
+[[ $EUID -ne 0 ]] && LOGE "错误：您必须以 root 身份运行此脚本! \n" && exit 1
 
 if [[ -f /etc/os-release ]]; then
     source /etc/os-release
@@ -26,11 +26,11 @@ elif [[ -f /usr/lib/os-release ]]; then
     source /usr/lib/os-release
     release=$ID
 else
-    echo "Failed to check the system OS, please contact the author!" >&2
+    echo "系统OS检查失败，请联系作者!" >&2
     exit 1
 fi
 
-echo "The OS release is: $release"
+echo "操作系统版本是: $release"
 
 confirm() {
     if [[ $# > 1 ]]; then
@@ -58,12 +58,12 @@ confirm_restart() {
 }
 
 before_show_menu() {
-    echo && echo -n -e "${yellow}Press enter to return to the main menu: ${plain}" && read temp
+    echo && echo -n -e "${yellow}按 Enter 键返回主菜单: ${plain}" && read temp
     show_menu
 }
 
 install() {
-    bash <(curl -Ls https://raw.githubusercontent.com/alireza0/s-ui/main/install.sh)
+    bash <(curl -Ls https://raw.githubusercontent.com/xxf185/s-ui/master/install.sh)
     if [[ $? == 0 ]]; then
         if [[ $# == 0 ]]; then
             start
@@ -74,7 +74,7 @@ install() {
 }
 
 update() {
-    confirm "This function will forcefully reinstall the latest version, and the data will not be lost. Do you want to continue?" "n"
+    confirm "此功能将强制重新安装最新版本，数据不会丢失。是否继续?" "n"
     if [[ $? != 0 ]]; then
         LOGE "Cancelled"
         if [[ $# == 0 ]]; then
@@ -82,32 +82,32 @@ update() {
         fi
         return 0
     fi
-    bash <(curl -Ls https://raw.githubusercontent.com/alireza0/s-ui/main/install.sh)
+    bash <(curl -Ls https://raw.githubusercontent.com/xxf185/s-ui/master/install.sh)
     if [[ $? == 0 ]]; then
-        LOGI "Update is complete, Panel has automatically restarted "
+        LOGI "更新完成，面板已自动重启 "
         exit 0
     fi
 }
 
 custom_version() {
-    echo "Enter the panel version (like 0.0.1):"
+    echo "输入面板版本 (例如 0.0.1):"
     read panel_version
 
     if [ -z "$panel_version" ]; then
-        echo "Panel version cannot be empty. Exiting."
+        echo "面板版本不能为空"
     exit 1
     fi
 
-    download_link="https://raw.githubusercontent.com/alireza0/s-ui/master/install.sh"
+    download_link="https://raw.githubusercontent.com/xxf185/s-ui/master/install.sh"
 
     install_command="bash <(curl -Ls $download_link) $panel_version"
 
-    echo "Downloading and installing panel version $panel_version..."
+    echo "下载并安装面板版本 $panel_version..."
     eval $install_command
 }
 
 uninstall() {
-    confirm "Are you sure you want to uninstall the panel?" "n"
+    confirm "您确定要卸载该面板吗?" "n"
     if [[ $? != 0 ]]; then
         if [[ $# == 0 ]]; then
             show_menu
@@ -123,7 +123,7 @@ uninstall() {
     rm /usr/local/s-ui/ -rf
 
     echo ""
-    echo -e "Uninstalled Successfully, If you want to remove this script, then after exiting the script run ${green}rm /usr/local/s-ui -f${plain} to delete it."
+    echo -e "卸载成功，如果要删除此脚本，请在退出脚本后运行${green}rm /usr/local/s-ui -f${plain} 删除它."
     echo ""
 
     if [[ $# == 0 ]]; then
