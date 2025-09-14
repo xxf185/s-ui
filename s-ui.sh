@@ -331,7 +331,7 @@ check_uninstall() {
     check_status s-ui
     if [[ $? != 2 ]]; then
         echo ""
-        LOGE "Panel is already installed, Please do not reinstall"
+        LOGE "面板已安装"
         if [[ $# == 0 ]]; then
             before_show_menu
         fi
@@ -345,7 +345,7 @@ check_install() {
     check_status s-ui
     if [[ $? == 2 ]]; then
         echo ""
-        LOGE "Please install the panel first"
+        LOGE "请先安装面板"
         if [[ $# == 0 ]]; then
             before_show_menu
         fi
@@ -359,15 +359,15 @@ show_status() {
     check_status $1
     case $? in
     0)
-        echo -e "${1} state: ${green}Running${plain}"
+        echo -e "${1} 状态: ${green}运行中${plain}"
         show_enable_status $1
         ;;
     1)
-        echo -e "${1} state: ${yellow}Not Running${plain}"
+        echo -e "${1} 状态: ${yellow}未运行${plain}"
         show_enable_status $1
         ;;
     2)
-        echo -e "${1} state: ${red}Not Installed${plain}"
+        echo -e "${1} 状态: ${red}未安装${plain}"
         ;;
     esac
 }
@@ -375,9 +375,9 @@ show_status() {
 show_enable_status() {
     check_enabled $1
     if [[ $? == 0 ]]; then
-        echo -e "Start ${1} automatically: ${green}Yes${plain}"
+        echo -e " ${1} 开机自启: ${green}Yes${plain}"
     else
-        echo -e "Start ${1} automatically: ${red}No${plain}"
+        echo -e " ${1} 开机自启: ${red}No${plain}"
     fi
 }
 
@@ -393,17 +393,17 @@ check_s-ui_status() {
 show_s-ui_status() {
     check_s-ui_status
     if [[ $? == 0 ]]; then
-        echo -e "s-ui state: ${green}Running${plain}"
+        echo -e "s-ui 状态: ${green}运行中${plain}"
     else
-        echo -e "s-ui state: ${red}Not Running${plain}"
+        echo -e "s-ui 状态: ${red}未运行${plain}"
     fi
 }
 
 bbr_menu() {
-    echo -e "${green}\t1.${plain} Enable BBR"
-    echo -e "${green}\t2.${plain} Disable BBR"
-    echo -e "${green}\t0.${plain} Back to Main Menu"
-    read -p "Choose an option: " choice
+    echo -e "${green}\t1.${plain} 启用BBR"
+    echo -e "${green}\t2.${plain} 禁用BBR"
+    echo -e "${green}\t0.${plain} 返回主菜单"
+    read -p "请选择: " choice
     case "$choice" in
     0)
         show_menu
@@ -414,7 +414,7 @@ bbr_menu() {
     2)
         disable_bbr
         ;;
-    *) echo "Invalid choice" ;;
+    *) echo "选择错误" ;;
     esac
 }
 
@@ -427,15 +427,15 @@ disable_bbr() {
     sed -i 's/net.ipv4.tcp_congestion_control=bbr/net.ipv4.tcp_congestion_control=cubic/' /etc/sysctl.conf
     sysctl -p
     if [[ $(sysctl net.ipv4.tcp_congestion_control | awk '{print $3}') == "cubic" ]]; then
-        echo -e "${green}BBR has been replaced with CUBIC successfully.${plain}"
+        echo -e "${green}BBR已成功替换为CUBIC.${plain}"
     else
-        echo -e "${red}Failed to replace BBR with CUBIC. Please check your system configuration.${plain}"
+        echo -e "${red}无法用 CUBIC 替换 BBR。请检查您的系统配置.${plain}"
     fi
 }
 
 enable_bbr() {
     if grep -q "net.core.default_qdisc=fq" /etc/sysctl.conf && grep -q "net.ipv4.tcp_congestion_control=bbr" /etc/sysctl.conf; then
-        echo -e "${green}BBR is already enabled!${plain}"
+        echo -e "${green}BBR已启用!${plain}"
         exit 0
     fi
     case "${release}" in
@@ -452,7 +452,7 @@ enable_bbr() {
         pacman -Sy --noconfirm ca-certificates
         ;;
     *)
-        echo -e "${red}Unsupported operating system. Please check the script and install the necessary packages manually.${plain}\n"
+        echo -e "${red}不支持的操作系统。请检查脚本并手动安装必要的软件包.${plain}\n"
         exit 1
         ;;
     esac
@@ -460,9 +460,9 @@ enable_bbr() {
     echo "net.ipv4.tcp_congestion_control=bbr" | tee -a /etc/sysctl.conf
     sysctl -p
     if [[ $(sysctl net.ipv4.tcp_congestion_control | awk '{print $3}') == "bbr" ]]; then
-        echo -e "${green}BBR has been enabled successfully.${plain}"
+        echo -e "${green}BBR已成功启用.${plain}"
     else
-        echo -e "${red}Failed to enable BBR. Please check your system configuration.${plain}"
+        echo -e "${red}无法启用 BBR。请检查您的系统配置.${plain}"
     fi
 }
 
