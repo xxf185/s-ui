@@ -468,48 +468,48 @@ enable_bbr() {
 
 install_acme() {
     cd ~
-    LOGI "install acme..."
+    LOGI "安装 acme..."
     curl https://get.acme.sh | sh
     if [ $? -ne 0 ]; then
-        LOGE "install acme failed"
+        LOGE "安装 acme 失败"
         return 1
     else
-        LOGI "install acme succeed"
+        LOGI "安装 acme 成功"
     fi
     return 0
 }
 
 ssl_cert_issue_main() {
-    echo -e "${green}\t1.${plain} Get SSL"
-    echo -e "${green}\t2.${plain} Revoke"
-    echo -e "${green}\t3.${plain} Force Renew"
-    echo -e "${green}\t4.${plain} Self-signed Certificate"
-    read -p "Choose an option: " choice
+    echo -e "${green}\t1.${plain} 获取证书"
+    echo -e "${green}\t2.${plain} 撤销证书"
+    echo -e "${green}\t3.${plain} 更新证书"
+    echo -e "${green}\t4.${plain} 自签名证书"
+    read -p "请选择: " choice
     case "$choice" in
         1) ssl_cert_issue ;;
         2) 
             local domain=""
-            read -p "Please enter your domain name to revoke the certificate: " domain
+            read -p "请输入您的域名以撤销证书: " domain
             ~/.acme.sh/acme.sh --revoke -d ${domain}
-            LOGI "Certificate revoked"
+            LOGI "证书已撤销"
             ;;
         3)
             local domain=""
-            read -p "Please enter your domain name to forcefully renew an SSL certificate: " domain
+            read -p "请输入域名以强制更新证书: " domain
             ~/.acme.sh/acme.sh --renew -d ${domain} --force ;;
         4)
             generate_self_signed_cert
             ;;
-        *) echo "Invalid choice" ;;
+        *) echo "选择错误" ;;
     esac
 }
 
 ssl_cert_issue() {
     if ! command -v ~/.acme.sh/acme.sh &>/dev/null; then
-        echo "acme.sh could not be found. we will install it"
+        echo "acme.sh未安装.我们将安装它"
         install_acme
         if [ $? -ne 0 ]; then
-            LOGE "install acme failed, please check logs"
+            LOGE "安装 acme 失败，请检查日志"
             exit 1
         fi
     fi
@@ -527,29 +527,29 @@ ssl_cert_issue() {
         pacman -Sy --noconfirm socat
         ;;
     *)
-        echo -e "${red}Unsupported operating system. Please check the script and install the necessary packages manually.${plain}\n"
+        echo -e "${red}不支持的操作系统。请检查脚本并手动安装必要的软件包.${plain}\n"
         exit 1
         ;;
     esac
     if [ $? -ne 0 ]; then
-        LOGE "install socat failed, please check logs"
+        LOGE "安装socat失败，请检查日志"
         exit 1
     else
-        LOGI "install socat succeed..."
+        LOGI "安装socat成功..."
     fi
 
     local domain=""
-    read -p "Please enter your domain name:" domain
-    LOGD "your domain is:${domain},check it..."
+    read -p "请输入您的域名:" domain
+    LOGD "您的域名:${domain},检查中..."
     local currentCert=$(~/.acme.sh/acme.sh --list | tail -1 | awk '{print $1}')
 
     if [ ${currentCert} == ${domain} ]; then
         local certInfo=$(~/.acme.sh/acme.sh --list)
-        LOGE "system already has certs here,can not issue again,current certs details:"
+        LOGE "系统此处已有证书，无法再次颁发，当前证书详情:"
         LOGI "$certInfo"
         exit 1
     else
-        LOGI "your domain is ready for issuing cert now..."
+        LOGI "您的域名现在可以颁发证书了..."
     fi
 
     certPath="/root/cert/${domain}"
@@ -561,40 +561,40 @@ ssl_cert_issue() {
     fi
 
     local WebPort=80
-    read -p "please choose which port do you use,default will be 80 port:" WebPort
+    read -p "请选择您使用的端口，默认为 80 端口:" WebPort
     if [[ ${WebPort} -gt 65535 || ${WebPort} -lt 1 ]]; then
-        LOGE "your input ${WebPort} is invalid,will use default port"
+        LOGE "您输入的 ${WebPort} 无效，将使用默认端口"
     fi
-    LOGI "will use port:${WebPort} to issue certs,please make sure this port is open..."
+    LOGI "您使用的:${WebPort} 要颁发证书，请确保此端口已打开..."
     ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
     ~/.acme.sh/acme.sh --issue -d ${domain} --standalone --httpport ${WebPort}
     if [ $? -ne 0 ]; then
-        LOGE "issue certs failed,please check logs"
+        LOGE "颁发证书失败，请检查日志"
         rm -rf ~/.acme.sh/${domain}
         exit 1
     else
-        LOGE "issue certs succeed,installing certs..."
+        LOGE "颁发证书成功，正在安装证书..."
     fi
     ~/.acme.sh/acme.sh --installcert -d ${domain} \
         --key-file /root/cert/${domain}/privkey.pem \
         --fullchain-file /root/cert/${domain}/fullchain.pem
 
     if [ $? -ne 0 ]; then
-        LOGE "install certs failed,exit"
+        LOGE "安装证书失败，退出"
         rm -rf ~/.acme.sh/${domain}
         exit 1
     else
-        LOGI "install certs succeed,enable auto renew..."
+        LOGI "安装证书成功，启用自动更新.."
     fi
 
     ~/.acme.sh/acme.sh --upgrade --auto-upgrade
     if [ $? -ne 0 ]; then
-        LOGE "auto renew failed, certs details:"
+        LOGE "自动续订失败，证书详细信息:"
         ls -lah cert/*
         chmod 755 $certPath/*
         exit 1
     else
-        LOGI "auto renew succeed, certs details:"
+        LOGI "自动续订成功，证书详细信息:"
         ls -lah cert/*
         chmod 755 $certPath/*
     fi
@@ -602,11 +602,11 @@ ssl_cert_issue() {
 
 ssl_cert_issue_CF() {
     echo -E ""
-    LOGD "******Instructions for use******"
-    echo "1) New certificate from Cloudflare"
-    echo "2) Force renew existing Certificates"
-    echo "3) Back to Menu"
-    read -p "Enter your choice [1-3]: " choice
+    LOGD "******使用说明******"
+    echo "1) Cloudflare 的新证书"
+    echo "2) 强制更新现有证书"
+    echo "3) 返回菜单"
+    read -p "请选择 [1-3]: " choice
 
     certPath="/root/cert-CF"
 
@@ -615,24 +615,24 @@ ssl_cert_issue_CF() {
             force_flag=""
             if [ "$choice" -eq 2 ]; then
                 force_flag="--force"
-                echo "Forcing SSL certificate reissuance..."
+                echo "强制重新颁发 SSL 证书..."
             else
-                echo "Starting SSL certificate issuance..."
+                echo "开始颁发 SSL 证书..."
             fi
             
-            LOGD "******Instructions for use******"
-            LOGI "This Acme script requires the following data:"
-            LOGI "1.Cloudflare Registered e-mail"
-            LOGI "2.Cloudflare Global API Key"
-            LOGI "3.The domain name that has been resolved DNS to the current server by Cloudflare"
-            LOGI "4.The script applies for a certificate. The default installation path is /root/cert "
-            confirm "Confirmed?[y/n]" "y"
+            LOGD "******使用说明******"
+            LOGI "该脚本将使用Acme脚本申请证书,使用时需保证:"
+            LOGI "1.知晓Cloudflare 注册邮箱"
+            LOGI "2.知晓Cloudflare Global API Key"
+            LOGI "3.域名已通过Cloudflare进行解析到当前服务器"
+            LOGI "4.该脚本申请证书默认安装路径为/root/cert目录 "
+            confirm "我已确认以上内容?[y/n]" "y"
             if [ $? -eq 0 ]; then
                 if ! command -v ~/.acme.sh/acme.sh &>/dev/null; then
-                    echo "acme.sh could not be found. Installing..."
+                    echo "安装Acme脚本..."
                     install_acme
                     if [ $? -ne 0 ]; then
-                        LOGE "Install acme failed, please check logs"
+                        LOGE "安装acme脚本失败"
                         exit 1
                     fi
                 fi
@@ -645,23 +645,23 @@ ssl_cert_issue_CF() {
                     mkdir -p $certPath
                 fi
 
-                LOGD "Please set a domain name:"
+                LOGD "请设置域名:"
                 read -p "Input your domain here: " CF_Domain
-                LOGD "Your domain name is set to: ${CF_Domain}"
+                LOGD "你的域名设置为: ${CF_Domain}"
 
                 CF_GlobalKey=""
                 CF_AccountEmail=""
-                LOGD "Please set the API key:"
+                LOGD "请设置API密钥:"
                 read -p "Input your key here: " CF_GlobalKey
-                LOGD "Your API key is: ${CF_GlobalKey}"
+                LOGD "你的API密钥为: ${CF_GlobalKey}"
 
-                LOGD "Please set up registered email:"
+                LOGD "请设置注册邮箱:"
                 read -p "Input your email here: " CF_AccountEmail
-                LOGD "Your registered email address is: ${CF_AccountEmail}"
+                LOGD "你的注册邮箱为: ${CF_AccountEmail}"
 
                 ~/.acme.sh/acme.sh --set-default-ca --server letsencrypt
                 if [ $? -ne 0 ]; then
-                    LOGE "Default CA, Let's Encrypt failed, script exiting..."
+                    LOGE "修改默认CA为Lets'Encrypt失败,脚本退出..."
                     exit 1
                 fi
 
@@ -670,15 +670,15 @@ ssl_cert_issue_CF() {
 
                 ~/.acme.sh/acme.sh --issue --dns dns_cf -d ${CF_Domain} -d *.${CF_Domain} $force_flag --log
                 if [ $? -ne 0 ]; then
-                    LOGE "Certificate issuance failed, script exiting..."
+                    LOGE "证书颁发失败，脚本退出..."
                     exit 1
                 else
-                    LOGI "Certificate issued Successfully, Installing..."
+                    LOGI "证书颁发成功，正在安装..."
                 fi
 
                 mkdir -p ${certPath}/${CF_Domain}
                 if [ $? -ne 0 ]; then
-                    LOGE "Failed to create directory: ${certPath}/${CF_Domain}"
+                    LOGE "无法创建目录: ${certPath}/${CF_Domain}"
                     exit 1
                 fi
 
@@ -687,18 +687,18 @@ ssl_cert_issue_CF() {
                     --key-file ${certPath}/${CF_Domain}/privkey.pem
 
                 if [ $? -ne 0 ]; then
-                    LOGE "Certificate installation failed, script exiting..."
+                    LOGE "证书安装失败，脚本退出..."
                     exit 1
                 else
-                    LOGI "Certificate installed Successfully, Turning on automatic updates..."
+                    LOGI "证书安装成功，正在开启自动更新..."
                 fi
 
                 ~/.acme.sh/acme.sh --upgrade --auto-upgrade
                 if [ $? -ne 0 ]; then
-                    LOGE "Auto update setup failed, script exiting..."
+                    LOGE "自动更新设置失败，脚本退出..."
                     exit 1
                 else
-                    LOGI "The certificate is installed and auto-renewal is turned on."
+                    LOGI "证书已安装，且自动续订功能已开启."
                     ls -lah ${certPath}/${CF_Domain}
                     chmod 755 ${certPath}/${CF_Domain}
                 fi
@@ -706,11 +706,11 @@ ssl_cert_issue_CF() {
             show_menu
             ;;
         3)
-            echo "Exiting..."
+            echo "退出..."
             show_menu
             ;;
         *)
-            echo "Invalid choice, please select again."
+            echo "选择无效，请重新选择."
             show_menu
             ;;
     esac
@@ -719,13 +719,13 @@ ssl_cert_issue_CF() {
 generate_self_signed_cert() {
     cert_dir="/etc/sing-box"
     mkdir -p "$cert_dir"
-    LOGI "Choose certificate type:"
+    LOGI "选择证书类型:"
     echo -e "${green}\t1.${plain} Ed25519 (*recommended*)"
     echo -e "${green}\t2.${plain} RSA 2048"
     echo -e "${green}\t3.${plain} RSA 4096"
     echo -e "${green}\t4.${plain} ECDSA prime256v1"
     echo -e "${green}\t5.${plain} ECDSA secp384r1"
-    read -p "Enter your choice [1-5, default 1]: " cert_type
+    read -p "请选择 [1-5, default 1]: " cert_type
     cert_type=${cert_type:-1}
 
     case "$cert_type" in
@@ -755,18 +755,18 @@ generate_self_signed_cert() {
             ;;
     esac
 
-    LOGI "Generating self-signed certificate ($algo)..."
+    LOGI "生成自签名证书 ($algo)..."
     sudo openssl req -x509 -nodes -days 3650 $key_opt \
         -keyout "${cert_dir}/self.key" \
         -out "${cert_dir}/self.crt" \
         -subj "/CN=myserver"
     if [[ $? -eq 0 ]]; then
         sudo chmod 600 "${cert_dir}/self."*
-        LOGI "Self-signed certificate generated successfully!"
-        LOGI "Certificate path: ${cert_dir}/self.crt"
-        LOGI "Key path: ${cert_dir}/self.key"
+        LOGI "自签名证书生成成功!"
+        LOGI "证书路径: ${cert_dir}/self.crt"
+        LOGI "密钥路径: ${cert_dir}/self.key"
     else
-        LOGE "Failed to generate self-signed certificate."
+        LOGE "无法生成自签名证书."
     fi
     before_show_menu
 }
