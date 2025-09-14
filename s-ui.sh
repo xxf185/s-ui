@@ -809,13 +809,13 @@ show_menu() {
   ${green}9.${plain} 设置面板设置
   ${green}10.${plain} 查看面板设置
 ————————————————————————————————
-  ${green}11.${plain} 启动 x-ui
-  ${green}12.${plain} 停止 x-ui
-  ${green}13.${plain} 重启 x-ui
-  ${green}14.${plain} 查看 x-ui 状态
-  ${green}15.${plain} 查看 x-ui 日志
-  ${green}16.${plain} 设置 x-ui 开机自启
-  ${green}17.${plain} 取消 x-ui 开机自启
+  ${green}11.${plain} 启动 s-ui
+  ${green}12.${plain} 停止 s-ui
+  ${green}13.${plain} 重启 s-ui
+  ${green}14.${plain} 查看 s-ui 状态
+  ${green}15.${plain} 查看 s-ui 日志
+  ${green}16.${plain} 设置 s-ui 开机自启
+  ${green}17.${plain} 取消 s-ui 开机自启
 ————————————————————————————————
   ${green}18.${plain} 启用&禁用 BBR
   ${green}19.${plain} SSL 证书管理
