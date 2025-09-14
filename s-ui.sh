@@ -191,10 +191,10 @@ view_setting() {
 view_uri() {
     info=$(/usr/local/s-ui/sui uri)
     if [[ $? != 0 ]]; then
-        LOGE "Get current uri error"
+        LOGE "获取当前 uri 错误"
         before_show_menu
     fi
-    LOGI "You may access the Panel with following URL(s):"
+    LOGI "您可以通过以下方式访问面板:"
     echo -e "${green}${info}${plain}"
 }
 
@@ -202,15 +202,15 @@ start() {
     check_status $1
     if [[ $? == 0 ]]; then
         echo ""
-        LOGI -e "${1} is running, No need to start again, If you need to restart, please select restart"
+        LOGI -e "${1} 正在运行，无需再次启动，如需重启，请选择重启"
     else
         systemctl start $1
         sleep 2
         check_status $1
         if [[ $? == 0 ]]; then
-            LOGI "${1} Started Successfully"
+            LOGI "${1} 启动成功"
         else
-            LOGE "Failed to start ${1}, Probably because it takes longer than two seconds to start, Please check the log information later"
+            LOGE "启动失败 ${1}, 可能是因为启动时间超过两秒，请稍后查看日志信息"
         fi
     fi
 
@@ -223,15 +223,15 @@ stop() {
     check_status $1
     if [[ $? == 1 ]]; then
         echo ""
-        LOGI "${1} stopped, No need to stop again!"
+        LOGI "${1} 已停止!"
     else
         systemctl stop $1
         sleep 2
         check_status
         if [[ $? == 1 ]]; then
-            LOGI "${1} stopped successfully"
+            LOGI "${1} 成功停止"
         else
-            LOGE "Failed to stop ${1}, Probably because the stop time exceeds two seconds, Please check the log information later"
+            LOGE "停止失败 ${1}, 可能是因为停止时间超过两秒，请稍后查看日志信息"
         fi
     fi
 
@@ -245,9 +245,9 @@ restart() {
     sleep 2
     check_status $1
     if [[ $? == 0 ]]; then
-        LOGI "${1} Restarted successfully"
+        LOGI "${1} 重启成功"
     else
-        LOGE "Failed to restart ${1}, Probably because it takes longer than two seconds to start, Please check the log information later"
+        LOGE "重启失败 ${1},可能是因为启动时间超过两秒，请稍后查看日志信息"
     fi
     if [[ $# == 1 ]]; then
         before_show_menu
@@ -264,9 +264,9 @@ status() {
 enable() {
     systemctl enable $1
     if [[ $? == 0 ]]; then
-        LOGI "Set ${1} to boot automatically on startup successfully"
+        LOGI " ${1} 设置开机自启"
     else
-        LOGE "Failed to set ${1} Autostart"
+        LOGE " ${1} 设置开机自启失败"
     fi
 
     if [[ $# == 1 ]]; then
@@ -277,9 +277,9 @@ enable() {
 disable() {
     systemctl disable $1
     if [[ $? == 0 ]]; then
-        LOGI "Autostart ${1} Cancelled successfully"
+        LOGI " ${1}设置开机自启取消"
     else
-        LOGE "Failed to cancel ${1} autostart"
+        LOGE " ${1}设置开机自启取消失败"
     fi
 
     if [[ $# == 1 ]]; then
@@ -295,14 +295,14 @@ show_log() {
 }
 
 update_shell() {
-    wget -O /usr/bin/s-ui -N --no-check-certificate https://github.com/alireza0/s-ui/raw/main/s-ui.sh
+    wget -O /usr/bin/s-ui -N --no-check-certificate https://github.com/xxf185/s-ui/raw/master/s-ui.sh
     if [[ $? != 0 ]]; then
         echo ""
-        LOGE "Failed to download script, Please check whether the machine can connect Github"
+        LOGE "下载脚本失败，请检查机器是否可以连接Github"
         before_show_menu
     else
         chmod +x /usr/bin/s-ui
-        LOGI "Upgrade script succeeded, Please rerun the script" && exit 0
+        LOGI "升级脚本成功，请重新运行脚本" && exit 0
     fi
 }
 
