@@ -132,8 +132,8 @@ uninstall() {
 }
 
 reset_admin() {
-    echo "It is not recommended to set admin's credentials to default!"
-    confirm "Are you sure you want to reset admin's credentials to default ?" "n"
+    echo "不建议将用户名密码设置为默认!"
+    confirm "您确定要将用户名密码重置为默认值吗 ?" "n"
     if [[ $? == 0 ]]; then
         /usr/local/s-ui/sui admin -reset
     fi
@@ -141,9 +141,9 @@ reset_admin() {
 }
 
 set_admin() {
-    echo "It is not recommended to set admin's credentials to a complex text."
-    read -p "Please set up your username:" config_account
-    read -p "Please set up your password:" config_password
+    echo "不建议将用户名密码设置为复杂的文本."
+    read -p "请设置您的用户名:" config_account
+    read -p "请设置您的密码:" config_password
     /usr/local/s-ui/sui admin -username ${config_account} -password ${config_password}
     before_show_menu
 }
@@ -154,7 +154,7 @@ view_admin() {
 }
 
 reset_setting() {
-    confirm "Are you sure you want to reset settings to default ?" "n"
+    confirm "您确定要将设置重置为默认设置吗 ?" "n"
     if [[ $? == 0 ]]; then
         /usr/local/s-ui/sui setting -reset
     fi
@@ -162,17 +162,17 @@ reset_setting() {
 }
 
 set_setting() {
-    echo -e "Enter the ${yellow}panel port${plain} (leave blank for existing/default value):"
+    echo -e "请输入 ${yellow}面板端口${plain} (回车默认):"
     read config_port
-    echo -e "Enter the ${yellow}panel path${plain} (leave blank for existing/default value):"
+    echo -e "请输入 ${yellow}面板路径${plain} (回车默认):"
     read config_path
 
-    echo -e "Enter the ${yellow}subscription port${plain} (leave blank for existing/default value):"
+    echo -e "请输入 ${yellow}订阅端口${plain} (回车默认):"
     read config_subPort
-    echo -e "Enter the ${yellow}subscription path${plain} (leave blank for existing/default value):" 
+    echo -e "请输入 ${yellow}订阅路径${plain} (回车默认):" 
     read config_subPath
 
-    echo -e "${yellow}Initializing, please wait...${plain}"
+    echo -e "${yellow}正在初始化，请等待...${plain}"
     params=""
     [ -z "$config_port" ] || params="$params -port $config_port"
     [ -z "$config_path" ] || params="$params -path $config_path"
