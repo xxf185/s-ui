@@ -65,15 +65,15 @@ config_after_install() {
     echo -e "${yellow}安装/更新已完成！出于安全考虑，建议修改面板设置 ${plain}"
     read -p "是否要继续修改 [y/n]? ": config_confirm
     if [[ "${config_confirm}" == "y" || "${config_confirm}" == "Y" ]]; then
-        echo -e "输入 ${yellow}面板端口${plain} (回车默认):"
+        echo -e "请输入 ${yellow}面板端口${plain} (回车默认):"
         read config_port
-        echo -e "输入 ${yellow}面板路径${plain} (回车默认):"
+        echo -e "请输入 ${yellow}面板路径${plain} (回车默认):"
         read config_path
 
         # Sub configuration
-        echo -e "输入 ${yellow}订阅端口${plain} (回车默认):"
+        echo -e "请输入 ${yellow}订阅端口${plain} (回车默认):"
         read config_subPort
-        echo -e "输入 ${yellow}订阅路径${plain} (回车默认):" 
+        echo -e "请输入 ${yellow}订阅路径${plain} (回车默认):" 
         read config_subPath
 
         # Set configs
